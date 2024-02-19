@@ -1,12 +1,11 @@
-import {FlatList, Image, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
+import {FlatList, Image, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
 
-import {getMachine, Task} from "../api/API";
+import {Machine, Task} from "../../api/API";
 import {Octicons} from '@expo/vector-icons';
 import {ListRenderItemInfo} from "@react-native/virtualized-lists/Lists/VirtualizedList";
-import {Link} from "expo-router";
+import {router} from "expo-router";
 
-export default function MachineOverview({id}: { id: string }) {
-    let machine = getMachine(id);
+export default function MachineOverview({machine}: { machine: Machine }) {
     let done = machine.tasks.filter(task => task.done).length + "/" + machine.tasks.length;
 
     let tasks = machine.tasks.filter(task => !task.done);
@@ -15,17 +14,17 @@ export default function MachineOverview({id}: { id: string }) {
         <TouchableWithoutFeedback>
             <View style={styles.task}>
                 <Octicons style={{paddingRight: 5}} name="dot-fill" size={16} color="#000"/>
-                <Text>{item.name}</Text>
+                <Text>{item.content}</Text>
             </View>
         </TouchableWithoutFeedback>
     );
 
     let openMachine = () => {
-
+        router.navigate({pathname: '/machine', params: {id: machine.id}});
     }
 
     return (
-        <Link href={"/machine/" + machine.id}>
+        <Pressable onPress={openMachine}>
             <View style={styles.container}>
                 <View style={styles.topContainer}>
                     <View style={styles.infoContainer}>
@@ -34,9 +33,9 @@ export default function MachineOverview({id}: { id: string }) {
                     <Image source={{uri: machine.image}} style={styles.image}/>
                 </View>
                 <Text style={styles.todos}>Tasks: {done}</Text>
-                <FlatList scrollEnabled={true} style={styles.taskList} data={tasks} renderItem={taskRenderer}/>
+                <FlatList style={styles.taskList} data={tasks} renderItem={taskRenderer}/>
             </View>
-        </Link>
+        </Pressable>
     );
 }
 

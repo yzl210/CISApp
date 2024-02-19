@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Text, View} from "react-native";
-import MachineOverview from "../components/MachineOverview";
+import MachineOverview from "../components/box/MachineOverview";
 
 export default function HomeScreen() {
 
