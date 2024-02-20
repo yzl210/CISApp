@@ -37,7 +37,7 @@ function Tasks({done, machine}: { done: boolean, machine: Machine }) {
     let tasks = machine.tasks.filter(task => task.done === done);
 
     let openTaskDetails = (task: Task) => {
-        alert(task.content)
+        alert("Task Details Page of task" + task.content)
     }
 
     let taskRenderer = ({item}: ListRenderItemInfo<Task>) => (

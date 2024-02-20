@@ -1,24 +1,31 @@
 export function getMachine(id: string): Machine {
     return {
         id: id,
-        description: "Description: " + randomStr(),
+        description: "Description of this machine",
         image: "https://th.bing.com/th/id/R.0f7c628876d5cd7e054b2cdd7c075ede?rik=VvvkRND%2fRw5Caw&pid=ImgRaw&r=0",
-        name: randomStr(),
+        name: randomMachine(),
         tasks: [
-            {id: "1", content: randomStr(), done: randomBool()},
-            {id: "2", content: randomStr(), done: randomBool()},
-            {id: "3", content: randomStr(), done: randomBool()},
-            {id: "4", content: randomStr(), done: randomBool()},
-            {id: "5", content: randomStr(), done: randomBool()},
-            {id: "6", content: randomStr(), done: randomBool()},
-            {id: "7", content: "This is a task with very long long content", done: randomBool()},
+            {id: "1", content: randomTask(), done: randomBool()},
+            {id: "2", content: randomTask(), done: randomBool()},
+            {id: "3", content: randomTask(), done: randomBool()},
+            {id: "4", content: randomTask(), done: randomBool()},
+            {id: "5", content: randomTask(), done: randomBool()},
+            {id: "6", content: randomTask(), done: randomBool()},
         ],
         logs: []
     };
 }
 
+function randomMachine() {
+    return Array("Cutting Machine", "Drilling Machine", "Welding Machine", "Bending Machine", "Punching Machine")[Math.floor(Math.random() * 5)];
+}
+
 function randomBool(): boolean {
     return Math.random() > 0.5;
+}
+
+function randomTask() {
+    return ["Fix the motor", "Change the blade", "Clean the dust", "Check the oil", "Replace the belt", "Check the voltage", "Check the current"][Math.floor(Math.random() * 7)];
 }
 
 function randomStr(): string {
