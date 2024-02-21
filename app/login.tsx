@@ -47,6 +47,11 @@ export default function Layout() {
                         login(username, password);
                         router.replace("/")
                     }}/>
+                    <Button label={"Register"} theme={"primary"} onPress={() => {
+                        login(username, password);
+                        router.replace("/")
+                    }}/>
+
                 </View>
             </SafeAreaView>
         </>

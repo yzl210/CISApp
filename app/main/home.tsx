@@ -7,6 +7,7 @@ import React from "react";
 export default function HomeScreen() {
     return (
         <>
+            <ScrollView horizontal={false}>
             <MachineCategory title={"Pinned"}
                              icon={<AntDesign style={styles.icon} name="pushpino" size={24} color="black"/>}
                              machines={getPins()}/>
@@ -19,6 +20,7 @@ export default function HomeScreen() {
             <MachineCategory title={"Maintenance Needed"}
                              icon={<AntDesign style={styles.icon} name="warning" size={24} color="black"/>}
                              machines={getMaintenanceNeeded()}/>
+            </ScrollView>
         </>
     );
 }
