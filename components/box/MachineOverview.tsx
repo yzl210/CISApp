@@ -14,7 +14,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
         <TouchableWithoutFeedback>
             <View style={styles.task}>
                 <Octicons style={{paddingRight: 5}} name="dot-fill" size={16} color="#000"/>
-                <Text>{item.content}</Text>
+                <Text>{item.title}</Text>
             </View>
         </TouchableWithoutFeedback>
     );

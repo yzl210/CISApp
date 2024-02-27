@@ -2,6 +2,7 @@ import {Image, Pressable, StyleSheet, Text, View} from "react-native";
 
 import {Machine} from "../../api/API";
 import React from "react";
+import Split from "../Split";
 
 export default function MachineInfo({machine}: { machine: Machine }) {
 
@@ -14,12 +15,7 @@ export default function MachineInfo({machine}: { machine: Machine }) {
                 <Text style={styles.name}>{machine.name}</Text>
                 <Text style={styles.minor}>{machine.id}</Text>
                 <Image source={{uri: machine.image}} style={styles.image}/>
-                <View
-                    style={{
-                        borderBottomColor: 'black',
-                        borderBottomWidth: StyleSheet.hairlineWidth,
-                    }}
-                />
+                <Split/>
                 <Text style={styles.description}>{machine.description}</Text>
             </View>
         </Pressable>

@@ -1,45 +1,30 @@
-import {
-    FlatList,
-    Image,
-    Pressable,
-    SafeAreaView, ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
-} from "react-native";
+import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
 import React from "react";
-import {getMaintenanceNeeded, getPins, Machine} from "../../api/API";
+import {Machine} from "../../api/API";
 import MachineOverview from "../../components/box/MachineOverview";
-import {AntDesign} from "@expo/vector-icons";
+import Split from "../../components/Split";
 
-const [username, setUsername] = React.useState('');
-const [password, setPassword] = React.useState('');
 
 export default function Browse() {
+    const [query, setQuery] = React.useState('');
+
     return (
         <>
-        <ScrollView horizontal={false}>
-            <SafeAreaView style={styles.textBox}>
-                <TextInput
-                    style={[styles.input, {color: 'grey'}]}
-                    numberOfLines={1}
-                    onChangeText={setUsername}
-                    value={username}
-                    placeholder="Enter machine name to search"
-                />
-            </SafeAreaView>
-            <View
-                style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                }}
-            />
-            <View>
-
-            </View>
-        </ScrollView>
-    </>
+            <ScrollView horizontal={false}>
+                <SafeAreaView style={styles.textBox}>
+                    <TextInput
+                        style={[styles.input, {color: 'grey'}]}
+                        numberOfLines={1}
+                        onChangeText={setQuery}
+                        value={query}
+                        placeholder="Enter machine name or id to search"
+                    />
+                </SafeAreaView>
+                <Split/>
+                <View>
+                </View>
+            </ScrollView>
+        </>
     );
 }
 

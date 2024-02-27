@@ -8,18 +8,18 @@ export default function HomeScreen() {
     return (
         <>
             <ScrollView horizontal={false}>
-            <MachineCategory title={"Pinned"}
-                             icon={<AntDesign style={styles.icon} name="pushpino" size={24} color="black"/>}
-                             machines={getPins()}/>
-            <View
-                style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                }}
-            />
-            <MachineCategory title={"Maintenance Needed"}
-                             icon={<AntDesign style={styles.icon} name="warning" size={24} color="black"/>}
-                             machines={getMaintenanceNeeded()}/>
+                <MachineCategory title={"Pinned"}
+                                 icon={<AntDesign style={styles.icon} name="pushpino" size={24} color="black"/>}
+                                 machines={getPins()}/>
+                <View
+                    style={{
+                        borderBottomColor: 'black',
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                    }}
+                />
+                <MachineCategory title={"Maintenance Needed"}
+                                 icon={<AntDesign style={styles.icon} name="warning" size={24} color="black"/>}
+                                 machines={getMaintenanceNeeded()}/>
             </ScrollView>
         </>
     );

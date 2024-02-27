@@ -5,14 +5,29 @@ export function getMachine(id: string): Machine {
         image: "https://th.bing.com/th/id/R.0f7c628876d5cd7e054b2cdd7c075ede?rik=VvvkRND%2fRw5Caw&pid=ImgRaw&r=0",
         name: randomMachine(),
         tasks: [
-            {id: "1", content: randomTask(), done: randomBool()},
-            {id: "2", content: randomTask(), done: randomBool()},
-            {id: "3", content: randomTask(), done: randomBool()},
-            {id: "4", content: randomTask(), done: randomBool()},
-            {id: "5", content: randomTask(), done: randomBool()},
-            {id: "6", content: randomTask(), done: randomBool()},
+            {
+                id: "1",
+                title: randomTask(),
+                details: "The details about this task this can be very long.",
+                done: randomBool()
+            },
+            {id: "2", title: randomTask(), done: randomBool()},
+            {id: "3", title: randomTask(), done: randomBool()},
+            {id: "4", title: randomTask(), done: randomBool()},
+            {id: "5", title: randomTask(), done: randomBool()},
+            {id: "6", title: randomTask(), done: randomBool()},
         ],
-        logs: []
+        logs: [
+            {
+                id: "123",
+                author: "Test User",
+                content: "Fixed something, lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod temporconsectetur adipiscing elit sed do eiusmod temporlorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+                ,
+                title: "A maintenance log",
+                time: Date.now(),
+                changes: [{task: "1", status: true}]
+            },
+        ]
     };
 }
 
@@ -52,14 +67,23 @@ export interface Machine {
 
 export interface Task {
     id: string;
-    content: string;
+    title: string;
+    details?: string;
     done: boolean;
 }
 
 export interface Log {
     id: string;
     author: string;
-    time: bigint;
+    time: number;
     title: string;
     content: string;
+    changes: Change[];
+}
+
+export type Change = TaskStatusChange;
+
+export interface TaskStatusChange {
+    task: string;
+    status: boolean;
 }
