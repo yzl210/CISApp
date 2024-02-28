@@ -2,7 +2,6 @@ import {Redirect, Stack, useLocalSearchParams} from "expo-router";
 import {ScrollView, StyleSheet} from "react-native";
 import {getMachine} from "../api/API";
 import MachineInfo from "../components/box/MachineInfo";
-import MachineTasks from "../components/box/MachineTasks";
 import MachineTask from "../components/box/MachineTask";
 import Split from "../components/Split";
 import MaintenanceLog from "../components/box/MaintenanceLog";

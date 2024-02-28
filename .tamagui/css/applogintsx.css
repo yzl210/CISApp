@@ -1,0 +1,59 @@
+:root ._dsp-flex {
+    display: flex;
+}
+
+:root ._fd-column {
+    flex-direction: column;
+}
+
+:root ._fb-auto {
+    flex-basis: auto;
+}
+
+:root ._bxs-border-box {
+    box-sizing: border-box;
+}
+
+:root ._pos-relative {
+    position: relative;
+}
+
+:root ._mih-0px {
+    min-height: 0px;
+}
+
+:root ._miw-0px {
+    min-width: 0px;
+}
+
+:root ._fs-0 {
+    flex-shrink: 0;
+}
+
+:root ._gap-1316330238 {
+    gap: var(--space-14);
+}
+
+:root ._ai-center {
+    align-items: center;
+}
+
+:root ._ai-stretch {
+    align-items: stretch;
+}
+
+:root ._w-300px {
+    width: 300px;
+}
+
+:root ._gap-1481558276 {
+    gap: var(--space-5);
+}
+
+:root ._mt-30px {
+    margin-top: 30px;
+}
+
+:root ._gap-1481558152 {
+    gap: var(--space-9);
+}

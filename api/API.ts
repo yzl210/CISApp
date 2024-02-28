@@ -32,7 +32,7 @@ export function getMachine(id: string): Machine {
 }
 
 function randomMachine() {
-    return Array("Cutting Machine", "Drilling Machine", "Welding Machine", "Bending Machine", "Punching Machine")[Math.floor(Math.random() * 5)];
+    return Array("Cutting Machine something like you known", "Drilling Machine", "Welding Machine", "Bending Machine", "Punching Machine")[Math.floor(Math.random() * 5)];
 }
 
 function randomBool(): boolean {
@@ -52,7 +52,7 @@ export function getMaintenanceNeeded(): Machine[] {
 }
 
 export function getPins(): Machine[] {
-    return Array.from({length: 2}, (_, i) => getMachine(i.toString()));
+    return Array.from({length: 25}, (_, i) => getMachine(i.toString()));
 }
 
 export interface Machine {

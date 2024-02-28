@@ -1,9 +1,10 @@
-import {FlatList, Image, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
+import {FlatList, TouchableWithoutFeedback} from "react-native";
 
 import {Machine, Task} from "../../api/API";
-import {Octicons} from '@expo/vector-icons';
 import {ListRenderItemInfo} from "@react-native/virtualized-lists/Lists/VirtualizedList";
 import {router} from "expo-router";
+import {Card, H3, Image, Separator, Text, View, XStack} from "tamagui";
+import {Dot} from "@tamagui/lucide-icons";
 
 export default function MachineOverview({machine}: { machine: Machine }) {
     let done = machine.tasks.filter(task => task.done).length + "/" + machine.tasks.length;
@@ -12,9 +13,9 @@ export default function MachineOverview({machine}: { machine: Machine }) {
 
     let taskRenderer = ({item}: ListRenderItemInfo<Task>) => (
         <TouchableWithoutFeedback>
-            <View style={styles.task}>
-                <Octicons style={{paddingRight: 5}} name="dot-fill" size={16} color="#000"/>
-                <Text>{item.title}</Text>
+            <View flexDirection={"row"} marginVertical={"$1"}>
+                <Dot scale={2}/>
+                <Text alignSelf={"center"}>{item.title}</Text>
             </View>
         </TouchableWithoutFeedback>
     );
@@ -24,69 +25,18 @@ export default function MachineOverview({machine}: { machine: Machine }) {
     }
 
     return (
-        <Pressable onPress={openMachine}>
-            <View style={styles.container}>
-                <View style={styles.topContainer}>
-                    <View style={styles.infoContainer}>
-                        <Text style={styles.name}>{machine.name}</Text>
+        <Card elevate bordered onPress={openMachine} hoverStyle={{scale: 0.975}} pressStyle={{scale: 0.95}}
+              animation={"quick"}>
+            <Card.Header padded>
+                <XStack>
+                    <View maxWidth={"$19"}>
+                        <H3 alignSelf={"center"}>{machine.name}</H3>
                     </View>
-                    <Image source={{uri: machine.image}} style={styles.image}/>
-                </View>
-                <Text style={styles.todos}>Tasks: {done}</Text>
-                <FlatList style={styles.taskList} data={tasks} renderItem={taskRenderer}/>
-            </View>
-        </Pressable>
+                    <Separator vertical marginHorizontal={"$3"}/>
+                    <Image source={{uri: machine.image, width: 100, height: 100}}></Image>
+                </XStack>
+                <FlatList data={tasks} renderItem={taskRenderer} scrollEnabled={false}/>
+            </Card.Header>
+        </Card>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
-
-        elevation: 6,
-        borderRadius: 10,
-        width: 240,
-        height: 240,
-        backgroundColor: '#fff',
-    },
-    topContainer: {
-        width: '100%',
-        height: '50%',
-        flexDirection: 'row',
-    },
-    infoContainer: {
-        width: '50%',
-        height: '100%',
-        justifyContent: 'center',
-    },
-    name: {
-        fontFamily: 'Inter_600SemiBold',
-        fontSize: 24,
-        textAlign: 'center',
-    },
-    todos: {
-        fontSize: 15,
-        textAlign: 'center',
-        color: 'gray',
-    },
-    image: {
-        width: '50%',
-        height: '50%',
-        borderRadius: 18,
-        alignSelf: 'center',
-    },
-    taskList: {
-        margin: 10,
-    },
-    task: {
-        marginLeft: 15,
-        margin: 5,
-        flexDirection: 'row',
-    }
-});
