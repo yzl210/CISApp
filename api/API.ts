@@ -1,3 +1,5 @@
+import {Tag} from "@tamagui/lucide-icons";
+
 export function getMachine(id: string): Machine {
     return {
         id: id,
@@ -17,12 +19,19 @@ export function getMachine(id: string): Machine {
             {id: "5", title: randomTask(), done: randomBool()},
             {id: "6", title: randomTask(), done: randomBool()},
         ],
+        tags: [
+            {
+                id: "1",
+                name: "Dangerous",
+                color: "red",
+                description: "This is dangerous"
+            }
+        ],
         logs: [
             {
                 id: "123",
                 author: "Test User",
-                content: "Fixed something, lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod temporconsectetur adipiscing elit sed do eiusmod temporlorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
-                ,
+                content: "Fixed something, lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod temporconsectetur adipiscing elit sed do eiusmod temporlorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
                 title: "A maintenance log",
                 time: Date.now(),
                 changes: [{task: "1", status: true}]
@@ -32,7 +41,7 @@ export function getMachine(id: string): Machine {
 }
 
 function randomMachine() {
-    return Array("Cutting Machine something like you known", "Drilling Machine", "Welding Machine", "Bending Machine", "Punching Machine")[Math.floor(Math.random() * 5)];
+    return Array("Cutting Machine", "Drilling Machine", "Welding Machine", "Bending Machine", "Punching Machine")[Math.floor(Math.random() * 5)];
 }
 
 function randomBool(): boolean {
@@ -55,12 +64,17 @@ export function getPins(): Machine[] {
     return Array.from({length: 25}, (_, i) => getMachine(i.toString()));
 }
 
+export function search(query: string): Machine[] {
+    return getPins().filter(machine => machine.name.toLowerCase().includes(query.toLowerCase()));
+}
+
 export interface Machine {
     id: string;
     name: string;
     description: string;
     notes?: string;
     image: string;
+    tags: Tag[]
     tasks: Task[];
     logs: Log[];
 }
@@ -70,6 +84,13 @@ export interface Task {
     title: string;
     details?: string;
     done: boolean;
+}
+
+export interface Tag {
+    id: string;
+    name: string;
+    color: string;
+    description: string;
 }
 
 export interface Log {

@@ -71,14 +71,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     name: {
-        fontFamily: 'Inter_600SemiBold',
         fontSize: 32,
         textAlign: 'center',
         marginVertical: 10,
         marginHorizontal: 5,
     },
     subtitle: {
-        fontFamily: 'Inter_600SemiBold',
         fontSize: 24,
         marginVertical: 10,
         marginHorizontal: 5,

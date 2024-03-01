@@ -1,11 +1,13 @@
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet} from "react-native";
 import React from "react";
 import {ViewStyle} from "react-native/Libraries/StyleSheet/StyleSheetTypes";
+import {Card, H2, View} from "tamagui";
 import hairlineWidth = StyleSheet.hairlineWidth;
 
-export default function Split({style, text, fontSize}: { style?: ViewStyle, text?: string, fontSize?: number }) {
+export default function Split({style, text}: { style?: ViewStyle, text?: string }) {
     if (!text) {
         return <View
+
             style={[{
                 borderBottomColor: 'black',
                 borderBottomWidth: StyleSheet.hairlineWidth,
@@ -13,11 +15,9 @@ export default function Split({style, text, fontSize}: { style?: ViewStyle, text
         />
     }
 
-    fontSize = fontSize || 32;
-
-    return <View style={[styles.container, style]}>
-        <Text style={[styles.text, {fontSize: fontSize}]}>{text}</Text>
-    </View>
+    return <Card elevate bordered marginHorizontal={"$"} marginVertical={"$3"} width={300} alignSelf={"center"}>
+        <H2 marginVertical={"$1.5"} textAlign={"center"}>{text}</H2>
+    </Card>
 }
 
 const styles = StyleSheet.create({
@@ -27,11 +27,5 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderRadius: 10,
         alignSelf: 'center',
-
-    },
-    text: {
-        textAlign: 'center',
-        fontFamily: 'Inter_600SemiBold',
-        margin: 5,
     },
 });

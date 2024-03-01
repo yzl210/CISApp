@@ -1,8 +1,7 @@
 import React, {useState} from "react";
 import {getUserName, isLoggedIn, logout} from "../../api/AccountManager";
 import {Redirect, router} from "expo-router";
-import {Text} from "react-native";
-import {AlertDialog, Button, XStack, YStack} from "tamagui";
+import {AlertDialog, Button, Text, XStack, YStack} from "tamagui";
 
 export default function Manage() {
     let username = getUserName();
@@ -20,7 +19,7 @@ export default function Manage() {
     }
 
     return (<>
-        <Text style={{margin: 10}}>Welcome, {username}</Text>
+        <Text margin={"10"}>Welcome, {username}</Text>
         <AlertDialog native>
             <AlertDialog.Trigger asChild>
                 <Button theme={"red_active"}>Logout</Button>

@@ -3,20 +3,18 @@ import {KeyboardAvoidingView, StyleSheet} from 'react-native';
 import React from "react";
 import {login} from "../api/AccountManager";
 import {router} from "expo-router";
-import {Button, Input, View, YStack} from "tamagui";
+import {Button, View, YStack} from "tamagui";
+import {Input} from "@tamagui/bento/src/components/forms/inputs/components/inputsParts"
+import {AlertCircle, KeyRound, Mail} from "@tamagui/lucide-icons";
 
 
 export default function Layout() {
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
 
-    let usernameValid = username.endsWith("@athenian.org");
-    let textColor: string;
-    if (!usernameValid && username.length > 0) {
-        textColor = "red";
-    } else {
-        textColor = "black"
-    }
+    let emailValid = username.endsWith("@athenian.org") || username.length === 0;
+    let textColor = emailValid ? "black" : "red";
+
     return (
         <KeyboardAvoidingView>
             <YStack gap={"$5"} alignItems={"center"}>
@@ -28,23 +26,34 @@ export default function Layout() {
                         transition={1000}
                     />
                 </View>
-                <YStack width={300} gap={"$1"} marginTop={30}>
-                    <Input
-                        color={textColor}
-                        numberOfLines={1}
-                        onChangeText={setUsername}
-                        value={username}
-                        textContentType={"emailAddress"}
-                        placeholder="Email"
-                    />
-                    <Input
-                        numberOfLines={1}
-                        onChangeText={setPassword}
-                        value={password}
-                        textContentType={"password"}
-                        secureTextEntry
-                        placeholder="Password"
-                    />
+                <YStack width={"$20"} gap={"$1"} marginTop={30}>
+                    <Input {...(!emailValid && {theme: 'red'})}>
+                        <Input.Box>
+                            <Input.Icon>
+                                {emailValid ? <Mail/> : <AlertCircle/>}
+                            </Input.Icon>
+                            <Input.Area
+                                color={textColor}
+                                onChangeText={setUsername}
+                                value={username}
+                                textContentType={"emailAddress"}
+                                placeholder="email@athenian.org"
+                            />
+                        </Input.Box>
+                    </Input>
+                    <Input>
+                        <Input.Box>
+                            <Input.Icon>
+                                <KeyRound/>
+                            </Input.Icon>
+                            <Input.Area
+                                onChangeText={setPassword}
+                                value={password}
+                                textContentType={"password"}
+                                placeholder="Password"
+                            />
+                        </Input.Box>
+                    </Input>
                 </YStack>
                 <YStack gap={"$3"}>
                     <Button themeInverse theme={"blue_active"} onPress={() => {
@@ -53,7 +62,7 @@ export default function Layout() {
                     }}>Login</Button>
                     <Button theme={"blue_active"}
                             variant={"outlined"}
-                            width={150}
+                            width={"$20"}
                             onPress={() => {
                                 login(username, password);
                                 router.replace("/")
@@ -63,6 +72,7 @@ export default function Layout() {
         </KeyboardAvoidingView>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {

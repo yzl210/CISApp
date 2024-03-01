@@ -1,22 +1,25 @@
 import {Log} from "../../api/API";
-import {StyleSheet, Text, View} from "react-native";
-import Split from "../Split";
+import {StyleSheet} from "react-native";
+import {Card, H2, Separator, Text, XStack} from "tamagui";
 
 export default function MaintenanceLog({log}: { log: Log }) {
 
     let time = new Date(log.time);
     let timeString = time.toLocaleDateString() + " " + time.toLocaleTimeString();
 
-    return <View style={styles.container}>
-        <Text numberOfLines={1} style={styles.title}>{log.title}</Text>
-        <View style={styles.subtitleContainer}>
-            <Text numberOfLines={1} style={[styles.subtitle, {marginLeft: 10}]}>{timeString}</Text>
-            <Text numberOfLines={1} style={[styles.subtitle, {marginRight: 10}]}>{log.author}</Text>
-        </View>
-        <Split style={{marginTop: 5}}/>
-        <Text numberOfLines={10} style={styles.content}>{log.content}</Text>
-        <Split style={{marginTop: 5}}/>
-    </View>
+    return <Card elevate bordered margin={"$2"} maxWidth={500}>
+        <Card.Header>
+            <H2 numberOfLines={1} textAlign={"center"}>{log.title}</H2>
+            <XStack justifyContent={"space-between"}>
+                <Text numberOfLines={1} marginHorizontal={10}>{timeString}</Text>
+                <Text numberOfLines={1} marginHorizontal={10}>{log.author}</Text>
+            </XStack>
+            <Separator/>
+        </Card.Header>
+        <Text numberOfLines={10} marginVertical={5} marginHorizontal={10} textAlign={"center"}
+              fontSize={18}>{log.content}</Text>
+        <Card.Background/>
+    </Card>
 }
 
 const styles = StyleSheet.create({
@@ -36,7 +39,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     title: {
-        fontFamily: 'Inter_600SemiBold',
         fontSize: 30,
         textAlign: 'center',
         marginHorizontal: 10,

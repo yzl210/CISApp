@@ -166,9 +166,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -693,9 +690,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -901,9 +895,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -1884,9 +1875,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -3903,9 +3891,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -6871,9 +6856,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -7838,9 +7820,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -10919,9 +10898,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -11135,9 +11111,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -11950,9 +11923,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -12161,9 +12131,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -12368,9 +12335,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -20287,9 +20251,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -20494,9 +20455,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -20700,9 +20658,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -20906,9 +20861,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -21112,9 +21064,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -21318,9 +21267,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -21524,9 +21470,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -21730,9 +21673,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
@@ -21936,9 +21876,6 @@
             },
             "inlineWhenUnflattened": {},
             "variants": {
-              "ellipsizeMode": {
-                "...": "Function"
-              },
               "ellipse": {
                 "true": {
                   "numberOfLines": 1,
