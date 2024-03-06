@@ -51,13 +51,13 @@ export default function Manage() {
                     opacity={1}
                     y={0}
                 >
-                    <YStack space>
+                    <YStack gap>
                         <AlertDialog.Title color={"red"}>Logout</AlertDialog.Title>
                         <AlertDialog.Description>
                             Are you sure you want to logout?
                         </AlertDialog.Description>
 
-                        <XStack space="$3" justifyContent="flex-end">
+                        <XStack gap="$3" justifyContent="flex-end">
                             <AlertDialog.Cancel asChild>
                                 <Button>Cancel</Button>
                             </AlertDialog.Cancel>

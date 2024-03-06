@@ -7,12 +7,21 @@ import Split from "../components/Split";
 import MaintenanceLog from "../components/card/MaintenanceLog";
 import {ScrollView, SizableText, Tabs, View} from "tamagui";
 import {Info, ListTodo, ScrollText} from "@tamagui/lucide-icons";
+import {useState} from "react";
 
 export default function Machine() {
     const {id} = useLocalSearchParams<{ id: string }>();
+    const [machine, setMachine] = useState(null)
 
     if (id === undefined || id === "") {
         return <Redirect href={"/"}/>;
+    }
+
+    if (machine === null) {
+        getMachine(id).then((machine) => {
+
+        })
+        return null;
     }
 
     let machine = getMachine(id);

@@ -8,7 +8,7 @@ export function getUserName() {
     return _username;
 }
 
-export function login(username: string, password: string) {
+export function doLogin(username: string, password: string) {
     _username = username;
     return true;
 }

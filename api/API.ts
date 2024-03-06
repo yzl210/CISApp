@@ -1,43 +1,69 @@
 import {Tag} from "@tamagui/lucide-icons";
+import {supabase} from "./supabase";
 
-export function getMachine(id: string): Machine {
-    return {
-        id: id,
-        description: "Description of this machine",
-        image: "https://th.bing.com/th/id/R.0f7c628876d5cd7e054b2cdd7c075ede?rik=VvvkRND%2fRw5Caw&pid=ImgRaw&r=0",
-        name: randomMachine(),
-        tasks: [
-            {
-                id: "1",
-                title: randomTask(),
-                details: "The details about this task this can be very long.",
-                done: randomBool()
-            },
-            {id: "2", title: randomTask(), done: randomBool()},
-            {id: "3", title: randomTask(), done: randomBool()},
-            {id: "4", title: randomTask(), done: randomBool()},
-            {id: "5", title: randomTask(), done: randomBool()},
-            {id: "6", title: randomTask(), done: randomBool()},
-        ],
-        tags: [
-            {
-                id: "1",
-                name: "Dangerous",
-                color: "red",
-                description: "This is dangerous"
-            }
-        ],
-        logs: [
-            {
-                id: "123",
-                author: "Test User",
-                content: "Fixed something, lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod temporconsectetur adipiscing elit sed do eiusmod temporlorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                title: "A maintenance log",
-                time: Date.now(),
-                changes: [{task: "1", status: true}]
-            },
-        ]
-    };
+export async function getMachine(id: string): Promise<Machine> {
+    const {data, error} = await supabase
+        .from("machines")
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        return Promise.reject(error);
+    }
+
+    return Promise.resolve(data);
+
+
+    // return {
+    //     id: id,
+    //     description: "Description of this machine",
+    //     image: "https://th.bing.com/th/id/R.0f7c628876d5cd7e054b2cdd7c075ede?rik=VvvkRND%2fRw5Caw&pid=ImgRaw&r=0",
+    //     name: randomMachine(),
+    //     tasks: [
+    //         {
+    //             id: "1",
+    //             title: randomTask(),
+    //             details: "The details about this task this can be very long.",
+    //             done: randomBool()
+    //         },
+    //         {id: "2", title: randomTask(), done: randomBool()},
+    //         {id: "3", title: randomTask(), done: randomBool()},
+    //         {id: "4", title: randomTask(), done: randomBool()},
+    //         {id: "5", title: randomTask(), done: randomBool()},
+    //         {id: "6", title: randomTask(), done: randomBool()},
+    //     ],
+    //     tags: [
+    //         {
+    //             id: "1",
+    //             name: "Dangerous",
+    //             color: "red",
+    //             description: "This is dangerous"
+    //         }
+    //     ],
+    //     logs: [
+    //         {
+    //             id: "123",
+    //             author: "Test User",
+    //             content: "Fixed something, lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod temporconsectetur adipiscing elit sed do eiusmod temporlorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+    //             title: "A maintenance log",
+    //             time: Date.now(),
+    //             changes: [{task: "1", status: true}]
+    //         },
+    //     ]
+    // };
+}
+
+export async function getAllMachines(): Promise<Machine[]> {
+    const {data, error} = await supabase
+        .from('machines')
+        .select('*');
+
+    if (error) {
+        return Promise.reject(error);
+    }
+
+    return Promise.resolve(data)
 }
 
 function randomMachine() {
@@ -57,11 +83,11 @@ function randomStr(): string {
 }
 
 export function getMaintenanceNeeded(): Machine[] {
-    return Array.from({length: 10}, (_, i) => getMachine(i.toString()));
+    return Array.of();
 }
 
 export function getPins(): Machine[] {
-    return Array.from({length: 25}, (_, i) => getMachine(i.toString()));
+    return Array.of();
 }
 
 export function search(query: string): Machine[] {
@@ -70,6 +96,8 @@ export function search(query: string): Machine[] {
 
 export interface Machine {
     id: string;
+    created_at: Date;
+    updated_at: Date;
     name: string;
     description: string;
     notes?: string;

@@ -1,4 +1,4 @@
-import {FlatList, TouchableHighlight, TouchableOpacity} from "react-native";
+import {FlatList} from "react-native";
 import React, {useState} from "react";
 import {Machine, search} from "../../api/API";
 import {Image, Input, Separator, Text, View, XStack} from "tamagui";

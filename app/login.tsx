@@ -1,22 +1,56 @@
 import {Image} from 'expo-image';
 import {KeyboardAvoidingView, StyleSheet} from 'react-native';
 import React from "react";
-import {login} from "../api/AccountManager";
-import {router} from "expo-router";
-import {Button, View, YStack} from "tamagui";
-import {Input} from "@tamagui/bento/src/components/forms/inputs/components/inputsParts"
+import {Text, View, XStack, YStack} from "tamagui";
 import {AlertCircle, KeyRound, Mail} from "@tamagui/lucide-icons";
+import {LmAlertDialog, LmButton, usePopoverState} from "@tamagui-extras/core";
+import {LmInput} from "@tamagui-extras/form";
+//import {supabase} from "../api/supabase";
+import { useHeaderHeight } from '@react-navigation/elements';
+import {router} from "expo-router";
+import {doLogin, isLoggedIn} from "../api/AccountManager";
 
 
 export default function Layout() {
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
+
+    const errorPopupState = usePopoverState();
+    errorPopupState.onOpenChange
+
+    let login = () => {
+        if (username.length === 0 || password.length === 0) {
+            return;
+        }
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            doLogin("", "");
+            router.replace("/");
+        }, 2000);
+        //errorPopupState.onOpenChange(true);
+        // supabase.auth.signInWithPassword({email: username, password: password})
+        //     .then((result) => {
+        //       setLoading(false);
+        //       if (result.error)
+        //         alert(result.error);
+        //       else {
+        //           alert(result.data);
+        //           router.replace("/");
+        //       }
+        //     });
+    }
 
     let emailValid = username.endsWith("@athenian.org") || username.length === 0;
     let textColor = emailValid ? "black" : "red";
 
+    let height = useHeaderHeight();
+
     return (
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView behavior={"position"} keyboardVerticalOffset={height + 10}>
+            {/*<LmAlertDialog title={'Something is wrong'} description={'Something is wrong'} {...errorPopupState}>*/}
+            {/*</LmAlertDialog>*/}
             <YStack gap={"$5"} alignItems={"center"}>
                 <View style={styles.container}>
                     <Image
@@ -27,46 +61,43 @@ export default function Layout() {
                     />
                 </View>
                 <YStack width={"$20"} gap={"$1"} marginTop={30}>
-                    <Input {...(!emailValid && {theme: 'red'})}>
-                        <Input.Box>
-                            <Input.Icon>
-                                {emailValid ? <Mail/> : <AlertCircle/>}
-                            </Input.Icon>
-                            <Input.Area
-                                color={textColor}
-                                onChangeText={setUsername}
-                                value={username}
-                                textContentType={"emailAddress"}
-                                placeholder="email@athenian.org"
-                            />
-                        </Input.Box>
-                    </Input>
-                    <Input>
-                        <Input.Box>
-                            <Input.Icon>
-                                <KeyRound/>
-                            </Input.Icon>
-                            <Input.Area
-                                onChangeText={setPassword}
-                                value={password}
-                                textContentType={"password"}
-                                placeholder="Password"
-                            />
-                        </Input.Box>
-                    </Input>
+                    <XStack marginBottom={"$1"} alignItems={"center"} gap={"$2"}>
+                        {emailValid ? <Mail color={textColor}/> : <AlertCircle color={textColor}/>}
+                        <Text color={textColor}>Email: </Text>
+                    </XStack>
+
+                    <LmInput
+                        disabled={loading}
+                        onChangeText={setUsername}
+                        value={username}
+                        textContentType={"emailAddress"}
+                        placeholder="email@athenian.org"
+                        error={!emailValid}
+                    >
+
+                    </LmInput>
+                    <XStack marginTop={"$3"} marginBottom={"$1"} alignItems={"center"} gap={"$2"}>
+                        <KeyRound/>
+                        <Text>Password: </Text>
+                    </XStack>
+                    <LmInput
+                        disabled={loading}
+                        onChangeText={setPassword}
+                             value={password}
+                             isPassword
+                             textContentType={"password"}
+                             placeholder="?">
+                    </LmInput>
                 </YStack>
-                <YStack gap={"$3"}>
-                    <Button themeInverse theme={"blue_active"} onPress={() => {
-                        login(username, password);
-                        router.replace("/")
-                    }}>Login</Button>
-                    <Button theme={"blue_active"}
-                            variant={"outlined"}
-                            width={"$20"}
-                            onPress={() => {
-                                login(username, password);
-                                router.replace("/")
-                            }}>Register</Button>
+                <YStack gap={"$3"} width={"$20"}>
+                    <LmButton loading={loading}
+                        themeInverse
+                        theme={"blue_active"}
+                        onPress={login}>Login</LmButton>
+                    <LmButton loading={loading}
+                        theme={"blue_active"}
+                        variant={"outlined"}
+                        onPress={login}>Register</LmButton>
                 </YStack>
             </YStack>
         </KeyboardAvoidingView>
