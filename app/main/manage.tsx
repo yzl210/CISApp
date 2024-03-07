@@ -1,25 +1,42 @@
-import React, {useState} from "react";
-import {getUserName, isLoggedIn, logout} from "../../api/AccountManager";
-import {Redirect, router} from "expo-router";
+import React, {useEffect, useState} from "react";
+import {router} from "expo-router";
 import {AlertDialog, Button, Text, XStack, YStack} from "tamagui";
+import {supabase} from "../../api/supabase";
+import {getUser, User} from "../../api/API";
+import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import {Session} from "@supabase/supabase-js";
+import Loading from "../../components/Loading";
 
 export default function Manage() {
-    let username = getUserName();
+    const [session, setSession] = useState<Session>();
+    const {data: user} = useQuery<User>(getUser(session ? session.user.id : ""), {
+        enabled: !!session
+    });
 
-    if (!isLoggedIn() || username === null) {
-        return <Redirect href={"/login"}/>;
+    useEffect(() => {
+        supabase.auth.getSession().then(({data, error}) => {
+            if (data && data.session) {
+                setSession(data.session);
+            } else {
+                router.replace("/");
+            }
+        }).catch(() => {
+            router.replace("/");
+        });
+    }, [])
+
+    if (!session || !user) {
+        return <Loading/>
     }
 
-    const [showLogoutPrompt, setShowLogoutPrompt] = useState(false);
-
     let doLogout = () => {
-        setShowLogoutPrompt(false);
-        logout();
-        router.replace("/");
+        supabase.auth.signOut().then(error => {
+            router.replace("/");
+        });
     }
 
     return (<>
-        <Text margin={"10"}>Welcome, {username}</Text>
+        <Text margin={"10"}>Welcome, {user.name}</Text>
         <AlertDialog native>
             <AlertDialog.Trigger asChild>
                 <Button theme={"red_active"}>Logout</Button>

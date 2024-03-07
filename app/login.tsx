@@ -3,13 +3,12 @@ import {KeyboardAvoidingView, StyleSheet} from 'react-native';
 import React from "react";
 import {Text, View, XStack, YStack} from "tamagui";
 import {AlertCircle, KeyRound, Mail} from "@tamagui/lucide-icons";
-import {LmAlertDialog, LmButton, usePopoverState} from "@tamagui-extras/core";
+import {LmButton, usePopoverState} from "@tamagui-extras/core";
 import {LmInput} from "@tamagui-extras/form";
 //import {supabase} from "../api/supabase";
-import { useHeaderHeight } from '@react-navigation/elements';
+import {useHeaderHeight} from '@react-navigation/elements';
 import {router} from "expo-router";
-import {doLogin, isLoggedIn} from "../api/AccountManager";
-
+import {supabase} from "../api/supabase";
 
 export default function Layout() {
     const [username, setUsername] = React.useState('');
@@ -24,22 +23,15 @@ export default function Layout() {
             return;
         }
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-            doLogin("", "");
-            router.replace("/");
-        }, 2000);
-        //errorPopupState.onOpenChange(true);
-        // supabase.auth.signInWithPassword({email: username, password: password})
-        //     .then((result) => {
-        //       setLoading(false);
-        //       if (result.error)
-        //         alert(result.error);
-        //       else {
-        //           alert(result.data);
-        //           router.replace("/");
-        //       }
-        //     });
+        supabase.auth.signInWithPassword({email: username, password: password})
+            .then((result) => {
+                setLoading(false);
+                if (result.error)
+                    alert(result.error);
+                else {
+                    router.replace("/");
+                }
+            });
     }
 
     let emailValid = username.endsWith("@athenian.org") || username.length === 0;
@@ -83,21 +75,21 @@ export default function Layout() {
                     <LmInput
                         disabled={loading}
                         onChangeText={setPassword}
-                             value={password}
-                             isPassword
-                             textContentType={"password"}
-                             placeholder="?">
+                        value={password}
+                        isPassword
+                        textContentType={"password"}
+                    >
                     </LmInput>
                 </YStack>
                 <YStack gap={"$3"} width={"$20"}>
                     <LmButton loading={loading}
-                        themeInverse
-                        theme={"blue_active"}
-                        onPress={login}>Login</LmButton>
+                              themeInverse
+                              theme={"blue_active"}
+                              onPress={login}>Login</LmButton>
                     <LmButton loading={loading}
-                        theme={"blue_active"}
-                        variant={"outlined"}
-                        onPress={login}>Register</LmButton>
+                              theme={"blue_active"}
+                              variant={"outlined"}
+                              onPress={login}>Register</LmButton>
                 </YStack>
             </YStack>
         </KeyboardAvoidingView>

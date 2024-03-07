@@ -1,10 +1,10 @@
 import {FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
-import {Machine, Task} from "../../api/API";
 import React from "react";
 import {ListRenderItemInfo} from "@react-native/virtualized-lists/Lists/VirtualizedList";
 import {Octicons} from "@expo/vector-icons";
 import Split from "../Split";
+import {Machine, Task} from "../../api/machine";
 
 export default function MachineTasks({machine}: { machine: Machine }) {
 
@@ -28,14 +28,14 @@ function Tasks({done, machine}: { done: boolean, machine: Machine }) {
     let tasks = machine.tasks.filter(task => task.done === done);
 
     let openTaskDetails = (task: Task) => {
-        alert("Task Details Page of task " + task.title)
+        alert("Task Details Page of task " + task.name)
     }
 
     let taskRenderer = ({item}: ListRenderItemInfo<Task>) => (
         <TouchableOpacity onPress={() => openTaskDetails(item)}>
             <View style={styles.task}>
                 <Octicons style={{paddingRight: 5, alignSelf: "center"}} name="dot-fill" size={16} color="#000"/>
-                <Text style={{fontSize: 22}}>{item.title}</Text>
+                <Text style={{fontSize: 22}}>{item.name}</Text>
             </View>
         </TouchableOpacity>
     );

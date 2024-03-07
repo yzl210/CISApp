@@ -1,6 +1,6 @@
-import {Machine} from "../../api/API";
 import React from "react";
 import {Card, H2, Image, Separator, Text, View} from "tamagui";
+import {Machine} from "../../api/machine";
 
 export default function MachineInfo({machine}: { machine: Machine }) {
 

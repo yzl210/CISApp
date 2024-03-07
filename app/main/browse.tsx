@@ -1,14 +1,19 @@
 import {FlatList} from "react-native";
 import React, {useState} from "react";
-import {Machine, search} from "../../api/API";
 import {Image, Input, Separator, Text, View, XStack} from "tamagui";
 import {router} from "expo-router";
+import {getAllMachines, Machine} from "../../api/machine";
+import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import Loading from "../../components/Loading";
 
 
 export default function Browse() {
     const [query, setQuery] = useState('');
+    const {data: machines} = useQuery(getAllMachines());
 
-    let machines = search(query);
+    if (!machines) {
+        return <Loading/>
+    }
 
     let openMachine = (machine: Machine) => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});

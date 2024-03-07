@@ -4,6 +4,9 @@ import {DarkTheme, DefaultTheme, ThemeProvider} from "@react-navigation/native";
 import {TamaguiProvider} from "tamagui";
 import tamaguiConfig from "../tamagui.config";
 import {useFonts} from "expo-font";
+import React from "react";
+import {QueryClientProvider} from "@tanstack/react-query";
+import {queryClient} from "../api/API";
 
 export default function Layout() {
     const [loaded] = useFonts({
@@ -12,16 +15,26 @@ export default function Layout() {
     });
 
     const colorScheme = useColorScheme()
-    return <TamaguiProvider config={tamaguiConfig}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-                <Stack.Screen name="main" options={{
-                    title: "Maintenance Tracker",
-                }}/>
-                <Stack.Screen name="login" options={{
-                    title: "Login or Register",
-                }}/>
-            </Stack>
-        </ThemeProvider>
-    </TamaguiProvider>;
+
+    if (!loaded) {
+        return null;
+    }
+
+    return <QueryClientProvider client={queryClient}>
+        <TamaguiProvider config={tamaguiConfig}>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack>
+                    <Stack.Screen name="index" options={{
+                        title: "Loading...",
+                    }}/>
+                    <Stack.Screen name="main" options={{
+                        title: "Maintenance Tracker",
+                    }}/>
+                    <Stack.Screen name="login" options={{
+                        title: "Login or Register",
+                    }}/>
+                </Stack>
+            </ThemeProvider>
+        </TamaguiProvider>
+    </QueryClientProvider>;
 }

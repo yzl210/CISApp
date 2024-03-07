@@ -1,12 +1,12 @@
-import {Task} from "../../api/API";
 import React from "react";
 import {Card, Separator, Text, XStack} from "tamagui";
 import {AlertCircle, CheckCircle2} from "@tamagui/lucide-icons";
+import {Task} from "../../api/machine";
 
 export default function MachineTask({task}: { task: Task }) {
 
     let openTask = () => {
-        alert("Task Details Page of task " + task.title)
+        alert(task.name + ": " + task.description);
     }
 
     let icon = task.done ? <CheckCircle2 marginHorizontal={"$2"} color={"green"}/> :
@@ -18,10 +18,10 @@ export default function MachineTask({task}: { task: Task }) {
             <Card.Header>
                 <XStack alignSelf={"center"}>
                     {icon}
-                    <Text alignSelf={"center"} numberOfLines={1}>{task.title}</Text>
+                    <Text alignSelf={"center"} numberOfLines={1}>{task.name}</Text>
                 </XStack>
-                {task.details ? <Separator marginVertical={"$3"}/> : null}
-                {task.details ? <Text numberOfLines={3}>{task.details}</Text> : null}
+                {task.description ? <Separator marginVertical={"$3"}/> : null}
+                {task.description ? <Text numberOfLines={3}>{task.description}</Text> : null}
             </Card.Header>
             <Card.Footer/>
             <Card.Background/>

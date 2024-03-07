@@ -1,22 +1,17 @@
-import {FlatList} from "react-native";
+import {ActivityIndicator, FlatList} from "react-native";
 
-import {Machine, Task} from "../../api/API";
-import {ListRenderItemInfo} from "@react-native/virtualized-lists/Lists/VirtualizedList";
 import {router} from "expo-router";
 import {Card, H3, Image, Separator, Text, View, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
+import {getMachineTasks, getTasks, Machine} from "../../api/machine";
+import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 
 export default function MachineOverview({machine}: { machine: Machine }) {
-    let done = machine.tasks.filter(task => task.done).length + "/" + machine.tasks.length;
 
-    let tasks = machine.tasks.filter(task => !task.done);
-
-    let taskRenderer = ({item}: ListRenderItemInfo<Task>) => (
-        <XStack marginVertical={"$1"}>
-            <Dot scale={2}/>
-            <Text alignSelf={"center"}>{item.title}</Text>
-        </XStack>
-    );
+    const {data: machineTasks} = useQuery(getMachineTasks(machine.id));
+    const {data: tasks} = useQuery(getTasks(machineTasks ?? []), {
+        enabled: !!machineTasks
+    });
 
     let openMachine = () => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});
@@ -34,7 +29,12 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                     <Image source={{uri: machine.image, width: 100, height: 100}}></Image>
                 </XStack>
                 <Separator marginVertical={"$2"}/>
-                <FlatList data={tasks} renderItem={taskRenderer} scrollEnabled={false}/>
+                {tasks ? <FlatList data={tasks} renderItem={({item: task}) => (
+                    <XStack marginVertical={"$1"}>
+                        <Dot scale={2}/>
+                        <Text alignSelf={"center"}>{task.name}</Text>
+                    </XStack>
+                )} scrollEnabled={false}/> : <ActivityIndicator/>}
             </Card.Header>
         </Card>
     );

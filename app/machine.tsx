@@ -1,35 +1,51 @@
 import {Redirect, Stack, useLocalSearchParams} from "expo-router";
-import {StyleSheet} from "react-native";
-import {getMachine} from "../api/API";
 import MachineInfo from "../components/card/MachineInfo";
 import MachineTask from "../components/card/MachineTask";
 import Split from "../components/Split";
-import MaintenanceLog from "../components/card/MaintenanceLog";
 import {ScrollView, SizableText, Tabs, View} from "tamagui";
 import {Info, ListTodo, ScrollText} from "@tamagui/lucide-icons";
-import {useState} from "react";
+import {getMachine, getMachineTasks, getTasks} from "../api/machine";
+import Loading from "../components/Loading";
+import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 
-export default function Machine() {
+export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
-    const [machine, setMachine] = useState(null)
 
     if (id === undefined || id === "") {
         return <Redirect href={"/"}/>;
     }
 
-    if (machine === null) {
-        getMachine(id).then((machine) => {
+    const {data: machine, error: machineError} = useQuery(getMachine(id));
+    const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(id));
+    const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
+        enabled: !!machineTasks
+    });
 
-        })
+    if (machineError) {
+        alert(machineError)
         return null;
     }
 
-    let machine = getMachine(id);
+    if (machineTasksError) {
+        alert(machineTasksError)
+        return null;
+    }
 
-    let todoTasks = machine.tasks.filter(task => !task.done).map(task => <MachineTask key={task.id} task={task}/>)
-    let doneTasks = machine.tasks.filter(task => task.done).map(task => <MachineTask key={task.id} task={task}/>)
+    if (tasksError) {
+        alert(tasksError)
+        return null;
+    }
 
-    let logs = machine.logs.map(log => <MaintenanceLog key={log.id} log={log}/>);
+    if (!machine || !machineTasks || !tasks) {
+        return <LoadingScreen/>
+    }
+
+
+    let todoTasks = tasks.filter(task => !task.done).map(task => <MachineTask key={task.id} task={task}/>)
+    let doneTasks = tasks.filter(task => task.done).map(task => <MachineTask key={task.id} task={task}/>)
+
+    //let logs = machine.logs.map(log => <MaintenanceLog key={log.id} log={log}/>);
+
 
     return <>
         <Stack.Screen
@@ -82,7 +98,7 @@ export default function Machine() {
             <Tabs.Content value={"logs"}>
                 <ScrollView height={"100%"}>
                     <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
-                        {logs}
+                        {/*{logs}*/}
                     </View>
                 </ScrollView>
             </Tabs.Content>
@@ -91,15 +107,14 @@ export default function Machine() {
     </>;
 }
 
-const styles = StyleSheet.create({
-    major_split: {
-        width: 400,
-        marginTop: 20,
-        marginBottom: 10,
-    },
-    minor_split: {
-        width: 380,
-        marginTop: 10,
-        marginBottom: 5,
-    }
-});
+function LoadingScreen() {
+    return <>
+        <Stack.Screen
+            options={{
+                title: "Loading...",
+                headerBackTitle: 'Back',
+            }}
+        />
+        <Loading/>
+    </>
+}

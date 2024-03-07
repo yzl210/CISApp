@@ -1,10 +1,18 @@
 import MachineOverview from "../../components/card/MachineOverview";
-import {getMaintenanceNeeded, getPins, Machine} from "../../api/API";
 import React from "react";
 import {ScrollView, SizableText, Tabs, View} from "tamagui";
 import {AlertTriangle, Pin} from "@tamagui/lucide-icons";
+import {getMaintenanceNeeded, getPins, Machine} from "../../api/machine";
+import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import Loading from "../../components/Loading";
 
 export default function HomeScreen() {
+    const {data: pins} = useQuery(getPins());
+    const {data: maintenanceNeeded} = useQuery(getMaintenanceNeeded());
+
+    if (!pins || !maintenanceNeeded) {
+        return <Loading/>
+    }
 
     return (
         <Tabs
@@ -24,8 +32,8 @@ export default function HomeScreen() {
                 </Tabs.Tab>
             </Tabs.List>
 
-            <MachineCategory value={"pinned"} machines={getPins()}/>
-            <MachineCategory value={"maintenance-needed"} machines={getMaintenanceNeeded()}/>
+            <MachineCategory value={"pinned"} machines={pins}/>
+            <MachineCategory value={"maintenance-needed"} machines={maintenanceNeeded}/>
 
         </Tabs>
     );
