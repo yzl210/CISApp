@@ -11,38 +11,20 @@ import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
 
-    if (id === undefined || id === "") {
+    if (!id || id.length < 1) {
         return <Redirect href={"/"}/>;
     }
 
     const {data: machine, error: machineError} = useQuery(getMachine(id));
-    const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(id));
-    const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
-        enabled: !!machineTasks
-    });
 
     if (machineError) {
         alert(machineError)
         return null;
     }
 
-    if (machineTasksError) {
-        alert(machineTasksError)
-        return null;
-    }
-
-    if (tasksError) {
-        alert(tasksError)
-        return null;
-    }
-
-    if (!machine || !machineTasks || !tasks) {
+    if (!machine) {
         return <LoadingScreen/>
     }
-
-
-    let todoTasks = tasks.filter(task => !task.done).map(task => <MachineTask key={task.id} task={task}/>)
-    let doneTasks = tasks.filter(task => task.done).map(task => <MachineTask key={task.id} task={task}/>)
 
     //let logs = machine.logs.map(log => <MaintenanceLog key={log.id} log={log}/>);
 
@@ -81,19 +63,7 @@ export default function MachinePage() {
             </Tabs.Content>
 
             <Tabs.Content value={"tasks"}>
-                <ScrollView height={"100%"}>
-                    {todoTasks.length > 0 ? <Split text={"To Do"}/> : null}
-                    {todoTasks.length > 0 ?
-                        <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
-                            {todoTasks}
-                        </View> : null}
-                    {doneTasks.length > 0 ? <Split text={"Done"}/> : null}
-                    {doneTasks.length > 0 ?
-                        <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
-                            {doneTasks}
-                        </View> : null}
-
-                </ScrollView>
+                <TasksTab machine_id={id}/>
             </Tabs.Content>
             <Tabs.Content value={"logs"}>
                 <ScrollView height={"100%"}>
@@ -105,6 +75,34 @@ export default function MachinePage() {
 
         </Tabs>
     </>;
+}
+
+function TasksTab({machine_id}: {machine_id: string}) {
+    const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(machine_id));
+    const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
+        enabled: !!machineTasks
+    });
+
+    if (!tasks)
+        return <Loading/>
+
+    let todoTasks = tasks.filter(task => !task.done).map(task => <MachineTask key={task.id} task={task}/>)
+    let doneTasks = tasks.filter(task => task.done).map(task => <MachineTask key={task.id} task={task}/>)
+
+
+    return <ScrollView height={"100%"}>
+        {todoTasks.length > 0 ? <Split text={"To Do"}/> : null}
+        {todoTasks.length > 0 ?
+            <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
+                {todoTasks}
+            </View> : null}
+        {doneTasks.length > 0 ? <Split text={"Done"}/> : null}
+        {doneTasks.length > 0 ?
+            <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
+                {doneTasks}
+            </View> : null}
+
+    </ScrollView>;
 }
 
 function LoadingScreen() {

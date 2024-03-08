@@ -1,10 +1,9 @@
-import {ActivityIndicator, FlatList} from "react-native";
-
 import {router} from "expo-router";
-import {Card, H3, Image, Separator, Text, View, XStack} from "tamagui";
+import {Card, H3, Image, Separator, Spinner, Text, View, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
 import {getMachineTasks, getTasks, Machine} from "../../api/machine";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import {FlatList} from "react-native";
 
 export default function MachineOverview({machine}: { machine: Machine }) {
 
@@ -34,7 +33,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                         <Dot scale={2}/>
                         <Text alignSelf={"center"}>{task.name}</Text>
                     </XStack>
-                )} scrollEnabled={false}/> : <ActivityIndicator/>}
+                )} scrollEnabled={false}/> : <Spinner/>}
             </Card.Header>
         </Card>
     );
