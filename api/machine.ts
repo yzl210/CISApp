@@ -54,8 +54,10 @@ export interface Machine {
     created_at: Date;
     updated_at: Date;
     name: string;
-    description: string;
-    image: string;
+    brand?: string;
+    model?: string;
+    description?: string;
+    image?: string;
 }
 
 
@@ -65,7 +67,8 @@ export interface Task {
     created_at: Date;
     name: string;
     description?: string;
-    done: boolean;
+    done_at?: Date;
+    done_by?: string;
 }
 
 

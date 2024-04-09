@@ -1,5 +1,5 @@
 import {router} from "expo-router";
-import {Card, H3, Image, Separator, Spinner, Text, View, XStack} from "tamagui";
+import {Card, H3, H5, Image, Separator, Spinner, Text, View, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
 import {getMachineTasks, getTasks, Machine} from "../../api/machine";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
@@ -23,11 +23,12 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                 <XStack>
                     <View alignSelf={"center"} maxWidth={"$19"}>
                         <H3 alignSelf={"center"}>{machine.name}</H3>
+                        {machine.model ? <H5 color={"gray"} alignSelf={"center"}>{machine.model}</H5> : null}
                     </View>
                     <Separator vertical marginHorizontal={"$3"}/>
                     <Image source={{uri: machine.image, width: 100, height: 100}}></Image>
                 </XStack>
-                <Separator marginVertical={"$2"}/>
+                {tasks && tasks.length > 0 ? <Separator marginVertical={"$2"}/> : null}
                 {tasks ? <FlatList data={tasks} renderItem={({item: task}) => (
                     <XStack marginVertical={"$1"}>
                         <Dot scale={2}/>

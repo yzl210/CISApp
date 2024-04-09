@@ -31,7 +31,7 @@ export default function Layout() {
                         title: "Maintenance Tracker",
                     }}/>
                     <Stack.Screen name="login" options={{
-                        title: "Login or Register",
+                        title: "Login",
                     }}/>
                 </Stack>
             </ThemeProvider>

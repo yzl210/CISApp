@@ -57,8 +57,21 @@ function MachineList({machines}: {machines: Machine[] | null | undefined}) {
                 <Image source={{uri: item.item.image, width: 50, height: 50}}/>
                 <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
                 <Text fontSize={20}>{item.item.name}</Text>
+                <Section text={item.item.model}/>
             </XStack>
             <Separator backgroundColor={"darkgray"} marginVertical={"$2"}/>
         </View>
     }}/>;
+}
+
+function Section({text}: {text: string | undefined}) {
+
+    if (!text) {
+        return null;
+    }
+
+    return <>
+        <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
+        <Text alignSelf={"center"} fontSize={16} color={"gray"}>{text}</Text>
+        </>
 }

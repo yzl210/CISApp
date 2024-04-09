@@ -9,7 +9,7 @@ export default function MachineTask({task}: { task: Task }) {
         alert(task.name + ": " + task.description);
     }
 
-    let icon = task.done ? <CheckCircle2 marginHorizontal={"$2"} color={"green"}/> :
+    let icon = task.done_at ? <CheckCircle2 marginHorizontal={"$2"} color={"green"}/> :
         <AlertCircle marginHorizontal={"$2"} color={"red"}/>;
 
     return (
