@@ -76,3 +76,30 @@ export interface MachineTask {
     machine: string;
     task: string;
 }
+
+export interface MachineTag {
+    machine: string;
+    tag: string;
+}
+
+export interface Tag {
+    id: string;
+    created_at: Date;
+    created_by?: string;
+    name: string;
+    color: number;
+}
+
+export function getTagsByIds(tag_id: string[]) {
+    return supabase
+        .from('tags')
+        .select<'*', Tag>('*')
+        .in('id', tag_id)
+}
+
+export function getMachineTags(machine_id: string) {
+    return supabase
+        .from('machine_tags')
+        .select<'*', MachineTag>('*')
+        .eq('machine', machine_id);
+}
