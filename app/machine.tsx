@@ -2,11 +2,16 @@ import {Redirect, Stack, useLocalSearchParams} from "expo-router";
 import MachineInfo from "../components/card/MachineInfo";
 import MachineTask from "../components/card/MachineTask";
 import Split from "../components/Split";
-import {ScrollView, SizableText, Tabs, View} from "tamagui";
-import {Info, ListTodo, ScrollText} from "@tamagui/lucide-icons";
+import {Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
+import {Info, LayoutList, ListChecks, ListTodo, ScrollText} from "@tamagui/lucide-icons";
 import {getMachine, getMachineTasks, getTasks} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import {useIsLandscape} from "../api/utils";
+import React from "react";
+import {FlatList} from "react-native";
+import {Log} from "../api/API";
+import MaintenanceLog from "../components/card/MaintenanceLog";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -16,9 +21,12 @@ export default function MachinePage() {
     }
 
     const {data: machine, error: machineError} = useQuery(getMachine(id));
+    const isLandscape = useIsLandscape();
+
 
     if (machineError) {
-        alert(machineError)
+
+
         return null;
     }
 
@@ -26,7 +34,33 @@ export default function MachinePage() {
         return <LoadingScreen/>
     }
 
-    //let logs = machine.logs.map(log => <MaintenanceLog key={log.id} log={log}/>);
+    if (isLandscape) {
+        return <>
+            <Stack.Screen
+                options={{
+                    title: machine.name,
+                    headerBackTitle: 'Back',
+                }}
+            />
+            <XStack height={"90%"}>
+                <Separator marginHorizontal={"1.25%"} vertical/>
+                <Category icon={<Info/>} title={"Information"}>
+                    <ScrollView height={"100%"}>
+                        <MachineInfo machine={machine}/>
+                    </ScrollView>
+                </Category>
+                <Separator marginHorizontal={"1.25%"} vertical/>
+                <Category icon={<ListTodo/>} title={"Tasks"}>
+                    <TasksTab machine_id={id}/>
+                </Category>
+                <Separator marginHorizontal={"1.25%"} vertical/>
+                <Category icon={<ScrollText/>} title={"Maintenance Logs"}>
+                    <LogsTab machine_id={id}/>
+                </Category>
+                <Separator marginHorizontal={"1.25%"} vertical/>
+            </XStack>
+        </>
+    }
 
 
     return <>
@@ -66,18 +100,25 @@ export default function MachinePage() {
                 <TasksTab machine_id={id}/>
             </Tabs.Content>
             <Tabs.Content value={"logs"}>
-                <ScrollView height={"100%"}>
-                    <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
-                        {/*{logs}*/}
-                    </View>
-                </ScrollView>
+                <LogsTab machine_id={id}/>
             </Tabs.Content>
 
         </Tabs>
     </>;
 }
 
-function TasksTab({machine_id}: {machine_id: string}) {
+function Category({icon, title, children}: { icon: React.JSX.Element, title: string, children: React.ReactNode }) {
+    return <YStack height={"100%"} width={"30%"} borderRadius={"$10"}>
+        <XStack gap={"$2"} padding={"$2"} marginVertical={"$3"} justifyContent={"center"} alignItems={"center"}
+                backgroundColor={"white"} borderRadius={"$3"}>
+            {icon}
+            <H2>{title}</H2>
+        </XStack>
+        <View height={"100%"} borderRadius={"$5"}>{children}</View>
+    </YStack>
+}
+
+function TasksTab({machine_id}: { machine_id: string }) {
     const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(machine_id));
     const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
         enabled: !!machineTasks
@@ -86,23 +127,51 @@ function TasksTab({machine_id}: {machine_id: string}) {
     if (!tasks)
         return <Loading/>
 
-    let todoTasks = tasks.filter(task => !task.done).map(task => <MachineTask key={task.id} task={task}/>)
-    let doneTasks = tasks.filter(task => task.done).map(task => <MachineTask key={task.id} task={task}/>)
+    let todoTasks = tasks.concat(tasks).concat(tasks).concat(tasks).concat(tasks).concat(tasks).concat(tasks).filter(task => !task.done_at);
+    let doneTasks = tasks.filter(task => task.done_at);
 
 
-    return <ScrollView height={"100%"}>
-        {todoTasks.length > 0 ? <Split text={"To Do"}/> : null}
-        {todoTasks.length > 0 ?
-            <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
-                {todoTasks}
-            </View> : null}
-        {doneTasks.length > 0 ? <Split text={"Done"}/> : null}
-        {doneTasks.length > 0 ?
-            <View gap={"$3"} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
-                {doneTasks}
-            </View> : null}
+    return <>
+        <Card height={"50%"}>
+            <Card.Header>
+                <XStack gap={"$2"} alignItems={"center"}>
+                    <LayoutList/>
+                    <H2>To Do</H2>
+                </XStack>
+            </Card.Header>
+            <Separator/>
+            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}} data={todoTasks}
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+        </Card>
+        <Separator marginVertical={"$2"}/>
+        <Card height={"50%"}>
+            <Card.Header>
+                <XStack gap={"$2"} alignItems={"center"}>
+                    <ListChecks/>
+                    <H2>Done</H2>
+                </XStack>
+            </Card.Header>
+            <Separator/>
+            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}} data={todoTasks}
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+        </Card>
+    </>;
+}
 
-    </ScrollView>;
+function LogsTab({machine_id}: { machine_id: string }) {
+    let log: Log = {
+        id: "1",
+        author: "John Doe",
+        time: Date.now(),
+        title: "Machine maintained",
+        content: "Machine was maintained and cleaned, all parts are in good condition, no need for replacement, machine is ready for use, all tasks are done, machine is ready for use.",
+        changes: []
+
+    }
+
+    return <View height={"100%"}>
+        <FlatList data={[log]} renderItem={item => <MaintenanceLog log={item.item}/>}></FlatList>
+    </View>
 }
 
 function LoadingScreen() {
