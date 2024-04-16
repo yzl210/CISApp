@@ -1,14 +1,22 @@
 import {FlatList} from "react-native";
 import React, {useState} from "react";
 import {Image, Input, Separator, Text, View, XStack} from "tamagui";
-import {router} from "expo-router";
-import {getAllMachines, Machine} from "../../api/machine";
+import {Redirect, router, useLocalSearchParams} from "expo-router";
+import {getAllMachines, getMachineTags, getTags, Machine} from "../../api/machine";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import Loading from "../../components/Loading";
+import TagComponent from "../../components/TagComponent";
 
 export default function Browse() {
     const [query, setQuery] = useState('');
     const {data: machines} = useQuery(getAllMachines());
+    if (machines!==undefined && machines!==null) {
+        for (let i = 0; i < machines.length; i++) {
+
+        }
+    }
+
+
 
     return (
         <View height={"100%"} backgroundColor={"white"}>

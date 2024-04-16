@@ -90,6 +90,10 @@ export interface Tag {
     color: number;
 }
 
+export function getTags(tags: MachineTag[], done?: boolean) {
+    return getTagsByIds(tags.map(t => t.tag));
+}
+
 export function getTagsByIds(tag_id: string[]) {
     return supabase
         .from('tags')

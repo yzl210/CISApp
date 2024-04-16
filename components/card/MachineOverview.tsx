@@ -1,16 +1,23 @@
 import {router} from "expo-router";
 import {Card, H3, H5, Image, Separator, Spinner, Text, View, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
-import {getMachineTasks, getTasks, Machine} from "../../api/machine";
+import {getMachineTags, getMachineTasks, getTags, getTagsByIds, getTasks, Machine} from "../../api/machine";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {FlatList} from "react-native";
+import TagComponent from "../TagComponent";
+
 
 export default function MachineOverview({machine}: { machine: Machine }) {
 
     const {data: machineTasks} = useQuery(getMachineTasks(machine.id));
+    const {data: machineTags} = useQuery(getMachineTags(machine.id));
     const {data: tasks} = useQuery(getTasks(machineTasks ?? []), {
         enabled: !!machineTasks
     });
+    const {data: tags} = useQuery(getTags(machineTags ?? []), {
+        enabled: !!machineTags
+    });
+
 
     let openMachine = () => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});
@@ -28,6 +35,10 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                     <Separator vertical marginHorizontal={"$3"}/>
                     <Image source={{uri: machine.image, width: 100, height: 100}}></Image>
                 </XStack>
+                {tags && tags.length > 0 ? <Separator marginVertical={"$2"}/> : null}
+                {tags ? <XStack>
+                    {tags.map(tag => <TagComponent tag={tag}/>)}
+                </XStack> : null}
                 {tasks && tasks.length > 0 ? <Separator marginVertical={"$2"}/> : null}
                 {tasks ? <FlatList data={tasks} renderItem={({item: task}) => (
                     <XStack marginVertical={"$1"}>

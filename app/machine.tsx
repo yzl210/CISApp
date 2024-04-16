@@ -2,11 +2,13 @@ import {Redirect, Stack, useLocalSearchParams} from "expo-router";
 import MachineInfo from "../components/card/MachineInfo";
 import MachineTask from "../components/card/MachineTask";
 import Split from "../components/Split";
-import {ScrollView, SizableText, Tabs, View} from "tamagui";
+import {Card, ScrollView, Separator, SizableText, Tabs, View, XStack} from "tamagui";
 import {Info, ListTodo, ScrollText} from "@tamagui/lucide-icons";
-import {getMachine, getMachineTasks, getTasks} from "../api/machine";
+import {getMachine, getMachineTags, getMachineTasks, getTags, getTasks} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import TagComponent from "../components/TagComponent";
+import React from "react";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -16,6 +18,10 @@ export default function MachinePage() {
     }
 
     const {data: machine, error: machineError} = useQuery(getMachine(id));
+    const {data: machineTags} = useQuery(getMachineTags(id));
+    const {data: tags} = useQuery(getTags(machineTags ?? []), {
+        enabled: !!machineTags
+    });
 
     if (machineError) {
         alert(machineError)
@@ -25,6 +31,7 @@ export default function MachinePage() {
     if (!machine) {
         return <LoadingScreen/>
     }
+
 
     //let logs = machine.logs.map(log => <MaintenanceLog key={log.id} log={log}/>);
 
@@ -74,6 +81,14 @@ export default function MachinePage() {
             </Tabs.Content>
 
         </Tabs>
+        <Card>
+            {tags && tags.length > 0}
+            {tags ? <XStack padding={"$1"} gap={"$2"}>
+                {tags.map(tag => <TagComponent tag={tag}/>)}
+                {tags.map(tag => <TagComponent tag={tag}/>)}
+            </XStack> : null}
+
+        </Card>
     </>;
 }
 
@@ -86,8 +101,8 @@ function TasksTab({machine_id}: {machine_id: string}) {
     if (!tasks)
         return <Loading/>
 
-    let todoTasks = tasks.filter(task => !task.done).map(task => <MachineTask key={task.id} task={task}/>)
-    let doneTasks = tasks.filter(task => task.done).map(task => <MachineTask key={task.id} task={task}/>)
+    let todoTasks = tasks.filter(task => !task.done_at).map(task => <MachineTask key={task.id} task={task}/>)
+    let doneTasks = tasks.filter(task => task.done_at).map(task => <MachineTask key={task.id} task={task}/>)
 
 
     return <ScrollView height={"100%"}>
