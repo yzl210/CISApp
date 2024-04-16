@@ -4,8 +4,6 @@ import {Dot} from "@tamagui/lucide-icons";
 
 
 export default function TagComponent({tag}: {tag: Tag}) {
-
-
     let color = "#" + tag.color.toString(16);
     const newShade = (hexColor: string, magnitude: number) => {
         hexColor = hexColor.replace(`#`, ``);

@@ -4,7 +4,7 @@ import MachineTask from "../components/card/MachineTask";
 import Split from "../components/Split";
 import {Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
 import {Info, LayoutList, ListChecks, ListTodo, ScrollText} from "@tamagui/lucide-icons";
-import {getMachine, getMachineTags, getMachineTasks, getTags, getTasks} from "../api/machine";
+import {getMachine, getMachineTags, getMachineTasks, getTags, getTasks, Machine} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {useIsLandscape} from "../api/utils";
@@ -12,7 +12,7 @@ import React from "react";
 import {FlatList} from "react-native";
 import {Log} from "../api/API";
 import MaintenanceLog from "../components/card/MaintenanceLog";
-import TagComponent from "../components/TagComponent";
+import MachineTags from "../components/card/MachineTags";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -30,8 +30,6 @@ export default function MachinePage() {
     });
 
     if (machineError) {
-
-
         return null;
     }
 
@@ -51,12 +49,13 @@ export default function MachinePage() {
                 <Separator marginHorizontal={"1.25%"} vertical/>
                 <Category icon={<Info/>} title={"Information"}>
                     <ScrollView height={"100%"}>
-                        <MachineInfo machine={machine}/>
+                        <MachineInformation machine={machine}/>
+
                     </ScrollView>
                 </Category>
                 <Separator marginHorizontal={"1.25%"} vertical/>
                 <Category icon={<ListTodo/>} title={"Tasks"}>
-                    <TasksTab machine_id={id}/>
+                    <TaskList machine_id={id}/>
                 </Category>
                 <Separator marginHorizontal={"1.25%"} vertical/>
                 <Category icon={<ScrollText/>} title={"Maintenance Logs"}>
@@ -97,27 +96,34 @@ export default function MachinePage() {
 
             <Tabs.Content value={"info"}>
                 <ScrollView height={"100%"}>
-                    <MachineInfo machine={machine}/>
+                    <MachineInformation machine={machine}/>
                 </ScrollView>
             </Tabs.Content>
 
             <Tabs.Content value={"tasks"}>
-                <TasksTab machine_id={id}/>
+                <TaskTab machine_id={id}/>
             </Tabs.Content>
             <Tabs.Content value={"logs"}>
                 <LogsTab machine_id={id}/>
             </Tabs.Content>
 
         </Tabs>
-        <Card>
-            {tags && tags.length > 0}
-            {tags ? <XStack padding={"$1"} gap={"$2"}>
-                {tags.map(tag => <TagComponent tag={tag}/>)}
-                {tags.map(tag => <TagComponent tag={tag}/>)}
-            </XStack> : null}
-
-        </Card>
     </>;
+}
+
+function MachineInformation({machine}: { machine: Machine }) {
+    const {data: machineTags} = useQuery(getMachineTags(machine.id));
+    const {data: tags} = useQuery(getTags(machineTags ?? []), {
+        enabled: !!machineTags
+    });
+
+    if (!tags)
+        return <Loading/>
+
+    return <View margin={"$2"} gap={"$2 "}>
+        <MachineInfo  machine={machine}/>
+        {tags && tags.length > 0 ? <MachineTags tags={tags}/> : null}
+    </View>
 }
 
 function Category({icon, title, children}: { icon: React.JSX.Element, title: string, children: React.ReactNode }) {
@@ -131,7 +137,7 @@ function Category({icon, title, children}: { icon: React.JSX.Element, title: str
     </YStack>
 }
 
-function TasksTab({machine_id}: { machine_id: string }) {
+function TaskList({machine_id}: { machine_id: string }) {
     const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(machine_id));
     const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
         enabled: !!machineTasks
@@ -140,7 +146,7 @@ function TasksTab({machine_id}: { machine_id: string }) {
     if (!tasks)
         return <Loading/>
 
-    let todoTasks = tasks.concat(tasks).concat(tasks).concat(tasks).concat(tasks).concat(tasks).concat(tasks).filter(task => !task.done_at);
+    let todoTasks = tasks.filter(task => !task.done_at);
     let doneTasks = tasks.filter(task => task.done_at);
 
 
@@ -171,10 +177,51 @@ function TasksTab({machine_id}: { machine_id: string }) {
     </>;
 }
 
+function TaskTab({machine_id}: { machine_id: string }) {
+    const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(machine_id));
+    const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
+        enabled: !!machineTasks
+    });
+
+    if (!tasks)
+        return <Loading/>
+
+    let todoTasks = tasks.filter(task => !task.done_at);
+    let doneTasks = tasks.filter(task => task.done_at);
+
+
+    return  <Tabs
+        defaultValue={"todos"}
+        orientation={"horizontal"}
+        flexDirection={"column"}
+    >
+        <Tabs.List>
+            <Tabs.Tab flex={1} value={"todos"} bordered={false}>
+                <LayoutList scale={0.7}/>
+                <SizableText>To Do</SizableText>
+            </Tabs.Tab>
+            <Tabs.Tab flex={1} value={"done"} bordered={false}>
+                <ListChecks scale={0.7}/>
+                <SizableText>Done</SizableText>
+            </Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Content value={"todos"}>
+            <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}} data={todoTasks}
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+        </Tabs.Content>
+
+        <Tabs.Content value={"done"}>
+            <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}} data={doneTasks}
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+        </Tabs.Content>
+    </Tabs>
+}
+
 function LogsTab({machine_id}: { machine_id: string }) {
     let log: Log = {
         id: "1",
-        author: "John Doe",
+        author: "Somebody",
         time: Date.now(),
         title: "Machine maintained",
         content: "Machine was maintained and cleaned, all parts are in good condition, no need for replacement, machine is ready for use, all tasks are done, machine is ready for use.",

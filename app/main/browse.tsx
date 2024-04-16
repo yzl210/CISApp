@@ -1,7 +1,7 @@
 import {FlatList} from "react-native";
 import React, {useState} from "react";
 import {Image, Input, Separator, Text, View, XStack} from "tamagui";
-import {Redirect, router, useLocalSearchParams} from "expo-router";
+import {router} from "expo-router";
 import {getAllMachines, getMachineTags, getTags, Machine} from "../../api/machine";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import Loading from "../../components/Loading";
@@ -10,12 +10,6 @@ import TagComponent from "../../components/TagComponent";
 export default function Browse() {
     const [query, setQuery] = useState('');
     const {data: machines} = useQuery(getAllMachines());
-    if (machines!==undefined && machines!==null) {
-        for (let i = 0; i < machines.length; i++) {
-
-        }
-    }
-
 
 
     return (
@@ -28,12 +22,14 @@ export default function Browse() {
                 />
             </View>
             <Separator marginVertical={"$1"}/>
-            <MachineList machines={machines ? query.length < 1 ? machines : machines.filter(m => search(m.name, query)) : undefined}/>
+            {machines ? <MachineList
+                    machines={machines ? query.length < 1 ? machines : machines.filter(m => search(m.name, query)) : []}/> :
+                <Loading/>}
         </View>
     );
 }
 
-function search(string: string , query: string) {
+function search(string: string, query: string) {
     const mainLength: number = string.length;
     let searchIndex: number = 0;
 
@@ -45,14 +41,18 @@ function search(string: string , query: string) {
     return searchIndex === query.length;
 }
 
-function MachineList({machines}: {machines: Machine[] | null | undefined}) {
-    if (!machines) {
-        return <Loading/>;
-    }
-
+function MachineList({machines}: { machines: Machine[] }) {
     if (machines.length < 1) {
         return <Text color={"gray"} alignSelf={"center"} marginVertical={"$2"}>No result</Text>;
     }
+
+    let tags = machines.map(machine => {
+        const {data: machineTags} = useQuery(getMachineTags(machine.id));
+        const {data: tags} = useQuery(getTags(machineTags ?? []), {
+            enabled: !!machineTags
+        });
+        return tags;
+    }).map(tags => tags ? tags.map(tag => <TagComponent tag={tag}/>) : []);
 
     let openMachine = (machine: Machine) => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});
@@ -65,14 +65,15 @@ function MachineList({machines}: {machines: Machine[] | null | undefined}) {
                 <Image source={{uri: item.item.image, width: 50, height: 50}}/>
                 <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
                 <Text fontSize={20}>{item.item.name}</Text>
-                <Section text={item.item.model}/>
+                <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
+                 {tags[item.index]}
             </XStack>
             <Separator backgroundColor={"darkgray"} marginVertical={"$2"}/>
         </View>
     }}/>;
 }
 
-function Section({text}: {text: string | undefined}) {
+function Section({text}: { text: string | undefined }) {
 
     if (!text) {
         return null;
@@ -81,5 +82,5 @@ function Section({text}: {text: string | undefined}) {
     return <>
         <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
         <Text alignSelf={"center"} fontSize={16} color={"gray"}>{text}</Text>
-        </>
+    </>
 }
