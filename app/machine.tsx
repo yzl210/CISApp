@@ -4,9 +4,6 @@ import MachineTask from "../components/card/MachineTask";
 import Split from "../components/Split";
 import {Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
 import {Info, LayoutList, ListChecks, ListTodo, ScrollText} from "@tamagui/lucide-icons";
-import {getMachine, getMachineTasks, getTasks} from "../api/machine";
-import {Card, ScrollView, Separator, SizableText, Tabs, View, XStack} from "tamagui";
-import {Info, ListTodo, ScrollText} from "@tamagui/lucide-icons";
 import {getMachine, getMachineTags, getMachineTasks, getTags, getTasks} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
@@ -16,7 +13,6 @@ import {FlatList} from "react-native";
 import {Log} from "../api/API";
 import MaintenanceLog from "../components/card/MaintenanceLog";
 import TagComponent from "../components/TagComponent";
-import React from "react";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
