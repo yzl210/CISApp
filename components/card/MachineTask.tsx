@@ -3,7 +3,7 @@ import {Card, Separator, Text, XStack} from "tamagui";
 import {AlertCircle, CheckCircle2} from "@tamagui/lucide-icons";
 import {Task} from "../../api/machine";
 
-export default function MachineTask({task}: { task: Task}) {
+export default function MachineTask({task}: { task: Task }) {
 
     let openTask = () => {
         alert(task.name + ": " + task.description);

@@ -1,9 +1,9 @@
 import {Tag} from "../api/machine";
-import {Text, View, XStack} from "tamagui";
+import {Text, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
 
 
-export default function TagComponent({tag}: {tag: Tag}) {
+export default function TagComponent({tag}: { tag: Tag }) {
     let color = "#" + tag.color.toString(16);
     const newShade = (hexColor: string, magnitude: number) => {
         hexColor = hexColor.replace(`#`, ``);
@@ -25,12 +25,9 @@ export default function TagComponent({tag}: {tag: Tag}) {
     };
 
 
-
-
     return (
         <XStack backgroundColor={color} borderRadius={8} padding={"$1"} alignItems={"center"}>
-            <Dot color={newShade(color,-40)} scale={2.5}>
-
+            <Dot color={newShade(color, -40)} scale={2.5}>
             </Dot>
             <Text marginRight={"$2.5"}>
                 {tag.name}

@@ -1,18 +1,20 @@
 import {router} from "expo-router";
-import {useEffect} from "react";
-import {getSession} from "../api/API";
 import Loading from "../components/Loading";
+import {useSession} from "../api/supabase";
 
 export default function Index() {
-    useEffect(() => {
-        getSession()
-            .then((session) => {
-                router.replace(session ? "main" : "login");
-            }).catch(() => {
-            router.replace("login");
-        });
-    }, []);
+    const {session, error} = useSession();
 
+    if (error) {
+        alert(error.message);
+        router.replace("login");
+        return null;
+    }
+
+    if (session) {
+        router.replace("main");
+        return null;
+    }
 
     return <Loading/>
 };

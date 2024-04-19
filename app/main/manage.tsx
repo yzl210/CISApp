@@ -1,31 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {router} from "expo-router";
 import {AlertDialog, Button, Text, XStack, YStack} from "tamagui";
 import {supabase} from "../../api/supabase";
-import {getUser, User} from "../../api/API";
-import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
-import {Session} from "@supabase/supabase-js";
+import {useRole, useUser} from "../../api/API";
 import Loading from "../../components/Loading";
 
 export default function Manage() {
-    const [session, setSession] = useState<Session>();
-    const {data: user} = useQuery<User>(getUser(session ? session.user.id : ""), {
-        enabled: !!session
-    });
+    const {user} = useUser();
+    const {role} = useRole();
 
-    useEffect(() => {
-        supabase.auth.getSession().then(({data, error}) => {
-            if (data && data.session) {
-                setSession(data.session);
-            } else {
-                router.replace("/");
-            }
-        }).catch(() => {
-            router.replace("/");
-        });
-    }, [])
-
-    if (!session || !user) {
+    if (!user || !role) {
         return <Loading/>
     }
 
@@ -36,7 +20,7 @@ export default function Manage() {
     }
 
     return (<>
-        <Text margin={"10"}>Welcome, {user.name}</Text>
+        <Text margin={"10"}>Welcome, {user.name + " (" + role.role + ")"}</Text>
         <AlertDialog native>
             <AlertDialog.Trigger asChild>
                 <Button theme={"red_active"}>Logout</Button>

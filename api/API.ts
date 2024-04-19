@@ -1,6 +1,10 @@
-import {supabase} from "./supabase";
+import {supabase, useSession} from "./supabase";
 import {Session} from "@supabase/supabase-js";
 import {QueryClient} from "@tanstack/react-query";
+import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+
+const userColumns = "id,name,avatar";
+const userRoleColumns = "user,role";
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -10,13 +14,6 @@ export const queryClient = new QueryClient({
     },
 })
 
-export function getUser(id: string) {
-    return supabase
-        .from('users')
-        .select('*')
-        .eq('id', id)
-        .single();
-}
 
 export async function getSession(): Promise<Session> {
     const {data, error} = await supabase.auth.getSession();
@@ -27,17 +24,43 @@ export async function getSession(): Promise<Session> {
     return data.session;
 }
 
+export function getUser(id: string) {
+    return supabase
+        .from('users')
+        .select(userColumns)
+        .eq('id', id)
+        .single();
+}
+
+export function getUserRole(user_id: string) {
+    return supabase
+        .from('user_roles')
+        .select<typeof userRoleColumns, UserRole>(userRoleColumns)
+        .eq('user', user_id)
+        .single();
+}
+
+export function useUser() {
+    const session = useSession();
+    const {data: user, error} = useQuery(getUser(session.session ? session.session.user.id : ""), {
+        enabled: !!session
+    });
+    return {user, error, session};
+}
+
+export function useRole() {
+    const user = useUser();
+    const {data: role, error} = useQuery(getUserRole(user.user ? user.user.id : ""), {
+        enabled: !!user
+    });
+    return {role, error, user};
+}
+
 
 // export function search(query: string): Machine[] {
 //     return getPins().filter(machine => machine.name.toLowerCase().includes(query.toLowerCase()));
 // }
 
-export interface Tag {
-    id: string;
-    name: string;
-    color: string;
-    description: string;
-}
 
 export interface Log {
     id: string;
@@ -60,4 +83,9 @@ export interface User {
     name: string;
     avatar: string;
     pinned: string[];
+}
+
+export interface UserRole {
+    user: string;
+    role: 'new' | 'intern' | 'user' | 'admin';
 }

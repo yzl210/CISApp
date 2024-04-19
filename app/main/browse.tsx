@@ -2,14 +2,13 @@ import {FlatList} from "react-native";
 import React, {useState} from "react";
 import {Image, Input, Separator, Text, View, XStack} from "tamagui";
 import {router} from "expo-router";
-import {getAllMachines, getMachineTags, getTags, Machine} from "../../api/machine";
-import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import {Machine, Tag, useAllMachines, useTags} from "../../api/machine";
 import Loading from "../../components/Loading";
 import TagComponent from "../../components/TagComponent";
 
 export default function Browse() {
     const [query, setQuery] = useState('');
-    const {data: machines} = useQuery(getAllMachines());
+    const {machines} = useAllMachines();
 
 
     return (
@@ -22,8 +21,8 @@ export default function Browse() {
                 />
             </View>
             <Separator marginVertical={"$1"}/>
-            {machines ? <MachineList
-                    machines={machines ? query.length < 1 ? machines : machines.filter(m => search(m.name, query)) : []}/> :
+            {machines ? <MachineList query={query}
+                                     machines={machines}/> :
                 <Loading/>}
         </View>
     );
@@ -41,32 +40,39 @@ function search(string: string, query: string) {
     return searchIndex === query.length;
 }
 
-function MachineList({machines}: { machines: Machine[] }) {
+function MachineList({query, machines}: { query: string, machines: Machine[] }) {
+
     if (machines.length < 1) {
         return <Text color={"gray"} alignSelf={"center"} marginVertical={"$2"}>No result</Text>;
     }
 
-    let tags = machines.map(machine => {
-        const {data: machineTags} = useQuery(getMachineTags(machine.id));
-        const {data: tags} = useQuery(getTags(machineTags ?? []), {
-            enabled: !!machineTags
-        });
-        return tags;
-    }).map(tags => tags ? tags.map(tag => <TagComponent tag={tag}/>) : []);
+    let tagMap = new Map<string, Tag[]>();
+
+    machines.forEach(machine => {
+        const {tags} = useTags(machine.id);
+        if (tags)
+            tagMap.set(machine.id, tags);
+    });
+
+    let tagComponents = new Map<string, React.JSX.Element[]>();
+    tagMap.forEach((tags, id) =>
+        tagComponents.set(id, tags.map(tag => <TagComponent key={tag.id} tag={tag}/>)));
+
+    let filtered = machines ? query.length < 1 ? machines : machines
+        .filter((m, i) => search(m.name, query) || tagMap.get(m.id)?.some(tag => search(tag.name, query))) : []
 
     let openMachine = (machine: Machine) => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});
     }
 
-
-    return <FlatList data={machines} renderItem={(item) => {
+    return <FlatList data={filtered} renderItem={(item) => {
         return <View key={item.item.id} onPress={() => openMachine(item.item)}>
             <XStack alignItems={"center"}>
                 <Image source={{uri: item.item.image, width: 50, height: 50}}/>
                 <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
                 <Text fontSize={20}>{item.item.name}</Text>
                 <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
-                 {tags[item.index]}
+                {tagComponents.get(item.item.id)}
             </XStack>
             <Separator backgroundColor={"darkgray"} marginVertical={"$2"}/>
         </View>

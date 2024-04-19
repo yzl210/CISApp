@@ -1,10 +1,9 @@
 import {Redirect, Stack, useLocalSearchParams} from "expo-router";
 import MachineInfo from "../components/card/MachineInfo";
 import MachineTask from "../components/card/MachineTask";
-import Split from "../components/Split";
 import {Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
 import {Info, LayoutList, ListChecks, ListTodo, ScrollText} from "@tamagui/lucide-icons";
-import {getMachine, getMachineTags, getMachineTasks, getTags, getTasks, Machine} from "../api/machine";
+import {getMachineTags, getTags, Machine, useMachine, useTasks} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {useIsLandscape} from "../api/utils";
@@ -21,15 +20,11 @@ export default function MachinePage() {
         return <Redirect href={"/"}/>;
     }
 
-    const {data: machine, error: machineError} = useQuery(getMachine(id));
+    const {machine, machineError} = useMachine(id);
     const isLandscape = useIsLandscape();
 
-    const {data: machineTags} = useQuery(getMachineTags(id));
-    const {data: tags} = useQuery(getTags(machineTags ?? []), {
-        enabled: !!machineTags
-    });
-
     if (machineError) {
+        alert(machineError.message);
         return null;
     }
 
@@ -120,8 +115,8 @@ function MachineInformation({machine}: { machine: Machine }) {
     if (!tags)
         return <Loading/>
 
-    return <View margin={"$2"} gap={"$2 "}>
-        <MachineInfo  machine={machine}/>
+    return <View margin={"$2"} gap={"$2"}>
+        <MachineInfo machine={machine}/>
         {tags && tags.length > 0 ? <MachineTags tags={tags}/> : null}
     </View>
 }
@@ -138,10 +133,7 @@ function Category({icon, title, children}: { icon: React.JSX.Element, title: str
 }
 
 function TaskList({machine_id}: { machine_id: string }) {
-    const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(machine_id));
-    const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
-        enabled: !!machineTasks
-    });
+    const {tasks} = useTasks(machine_id);
 
     if (!tasks)
         return <Loading/>
@@ -178,10 +170,10 @@ function TaskList({machine_id}: { machine_id: string }) {
 }
 
 function TaskTab({machine_id}: { machine_id: string }) {
-    const {data: machineTasks, error: machineTasksError} = useQuery(getMachineTasks(machine_id));
-    const {data: tasks, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
-        enabled: !!machineTasks
-    });
+    const {tasks, tasksError} = useTasks(machine_id);
+
+    if (tasksError)
+        alert(tasksError.message);
 
     if (!tasks)
         return <Loading/>
@@ -190,7 +182,7 @@ function TaskTab({machine_id}: { machine_id: string }) {
     let doneTasks = tasks.filter(task => task.done_at);
 
 
-    return  <Tabs
+    return <Tabs
         defaultValue={"todos"}
         orientation={"horizontal"}
         flexDirection={"column"}
@@ -207,12 +199,14 @@ function TaskTab({machine_id}: { machine_id: string }) {
         </Tabs.List>
 
         <Tabs.Content value={"todos"}>
-            <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}} data={todoTasks}
+            <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
+                      data={todoTasks}
                       renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
         </Tabs.Content>
 
         <Tabs.Content value={"done"}>
-            <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}} data={doneTasks}
+            <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
+                      data={doneTasks}
                       renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
         </Tabs.Content>
     </Tabs>

@@ -2,21 +2,21 @@ import {Tabs} from "expo-router";
 import {Home, List, Settings} from "@tamagui/lucide-icons";
 
 export default function MainLayout() {
-    return <Tabs>
+    return <Tabs screenOptions={{headerShown: false}}>
         <Tabs.Screen name="home" options={{
             title: "Home",
             href: "main/home",
-            tabBarIcon: props => <Home {...props}/>
+            tabBarIcon: ({size, color}) => <Home size={size} color={color}/>
         }}/>
         <Tabs.Screen name="browse" options={{
             title: "Browse",
             href: "main/browse",
-            tabBarIcon: props => <List {...props}/>
+            tabBarIcon: ({size, color}) => <List size={size} color={color}/>
         }}/>
         <Tabs.Screen name="manage" options={{
             title: "Manage",
             href: "main/manage",
-            tabBarIcon: props => <Settings {...props}/>
+            tabBarIcon: ({size, color}) => <Settings size={size} color={color}/>
         }}/>
     </Tabs>;
 }

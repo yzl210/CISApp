@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {createClient} from '@supabase/supabase-js';
+import {createClient, Session} from '@supabase/supabase-js';
+import {useEffect, useState} from "react";
 
 const supabaseUrl = "https://qszbybvxirdfhekngzbj.supabase.co"
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzemJ5YnZ4aXJkZmhla25nemJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDkzMzIxODIsImV4cCI6MjAyNDkwODE4Mn0.rivTg17wqzZ6Zd-Z6va_iNpkZPDdDrd3bPkfm3pwENo"
@@ -15,5 +16,24 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 export function isLoggedIn() {
     return supabase.auth.getSession() !== null;
+}
+
+export function useSession() {
+    const [session, setSession] = useState<Session>()
+    const [error, setError] = useState<Error>()
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({data, error}) => {
+            if (data && data.session)
+                setSession(data.session);
+            if (error)
+                setError(error);
+
+        }).catch(() => {
+            setError(new Error("No session found"));
+        });
+    }, [])
+
+    return {session, error};
 }
 

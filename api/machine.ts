@@ -1,9 +1,16 @@
 import {supabase} from "./supabase";
+import {useQuery, useUpdateMutation} from "@supabase-cache-helpers/postgrest-react-query";
+
+const machineColumns = "id,created_at,updated_at,name,brand,model,serial,location,description,image";
+const machineTaskColumns = "machine,task";
+const taskColumns = "id,created_at,name,description,done_at,done_by";
+const machineTagColumns = "machine,tag";
+const tagColumns = "id,created_at,created_by,name,color";
 
 export function getAllMachines() {
     return supabase
         .from('machines')
-        .select<'*', Machine>('*')
+        .select<typeof machineColumns, Machine>(machineColumns)
 }
 
 export function getMachine(machine_id: string) {
@@ -17,10 +24,29 @@ export function getMachines(machine_ids: string[]) {
         .in('id', machine_ids);
 }
 
+export function useMachine(machine_id: string) {
+    const {data: machine, status: machineStatus, error: machineError} = useQuery(getMachine(machine_id));
+    return {machine, machineStatus, machineError};
+}
+
+export function useMachines(machine_id: string[]) {
+    const {data: machines, status: machinesStatus, error: machinesError} = useQuery(getMachines(machine_id));
+    return {machines, machinesStatus, machinesError};
+}
+
+export function useAllMachines() {
+    const {data: machines, status: machinesStatus, error: machinesError} = useQuery(getAllMachines());
+    return {machines, machinesStatus, machinesError};
+}
+
+export function useUpdateMachine() {
+    return useUpdateMutation(supabase.from('machines'), ['id'], machineColumns);
+}
+
 export function getMachineTasks(machine_id: string) {
     return supabase
         .from('machine_tasks')
-        .select<'*', MachineTask>('*')
+        .select<typeof machineTaskColumns, MachineTask>(machineTaskColumns)
         .eq('machine', machine_id);
 }
 
@@ -31,7 +57,7 @@ export function getTasks(tasks: MachineTask[], done?: boolean) {
 export function getTasksByIds(task_ids: string[], done?: boolean) {
     let request = supabase
         .from('tasks')
-        .select<'*', Task>('*')
+        .select<typeof taskColumns, Task>(taskColumns)
         .in('id', task_ids);
 
 
@@ -39,6 +65,19 @@ export function getTasksByIds(task_ids: string[], done?: boolean) {
         request = request.eq('done', done);
 
     return request
+}
+
+export function useTasks(machine_id: string) {
+    const {
+        data: machineTasks,
+        status: machineTasksStatus,
+        error: machineTasksError
+    } = useQuery(getMachineTasks(machine_id));
+    const {data: tasks, status: tasksStatus, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
+        enabled: !!machineTasks
+    });
+
+    return {machineTasks, machineTasksStatus, machineTasksError, tasks, tasksStatus, tasksError};
 }
 
 export function getMaintenanceNeeded() {
@@ -56,6 +95,8 @@ export interface Machine {
     name: string;
     brand?: string;
     model?: string;
+    serial?: string;
+    location?: string;
     description?: string;
     image?: string;
 }
@@ -63,7 +104,6 @@ export interface Machine {
 
 export interface Task {
     id: string;
-    machine_id: string;
     created_at: Date;
     name: string;
     description?: string;
@@ -97,13 +137,26 @@ export function getTags(tags: MachineTag[], done?: boolean) {
 export function getTagsByIds(tag_id: string[]) {
     return supabase
         .from('tags')
-        .select<'*', Tag>('*')
+        .select<typeof tagColumns, Tag>(tagColumns)
         .in('id', tag_id)
 }
 
 export function getMachineTags(machine_id: string) {
     return supabase
         .from('machine_tags')
-        .select<'*', MachineTag>('*')
+        .select<typeof machineTagColumns, MachineTag>(machineTagColumns)
         .eq('machine', machine_id);
+}
+
+export function useTags(machine_id: string) {
+    const {
+        data: machineTags,
+        status: machineTagsStatus,
+        error: machineTagsError
+    } = useQuery(getMachineTags(machine_id));
+    const {data: tags, status: tagsStatus, error: tagsError} = useQuery(getTags(machineTags ?? []), {
+        enabled: !!machineTags
+    });
+
+    return {machineTags, machineTagsStatus, machineTagsError, tags, tagsStatus, tagsError};
 }

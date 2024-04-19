@@ -17,6 +17,6 @@ export default function MaintenanceLog({log}: { log: Log }) {
         </Card.Header>
         <Text numberOfLines={10} marginBottom={"$4"} marginHorizontal={10} textAlign={"center"}
               fontSize={18}>{log.content}</Text>
-        <Card.Background />
+        <Card.Background/>
     </Card>
 }

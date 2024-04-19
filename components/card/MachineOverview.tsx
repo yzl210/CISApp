@@ -1,23 +1,15 @@
 import {router} from "expo-router";
 import {Card, H3, H5, Image, Separator, Spinner, Text, View, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
-import {getMachineTags, getMachineTasks, getTags, getTagsByIds, getTasks, Machine} from "../../api/machine";
-import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
+import {Machine, useTags, useTasks} from "../../api/machine";
 import {FlatList} from "react-native";
 import TagComponent from "../TagComponent";
 
 
 export default function MachineOverview({machine}: { machine: Machine }) {
 
-    const {data: machineTasks} = useQuery(getMachineTasks(machine.id));
-    const {data: machineTags} = useQuery(getMachineTags(machine.id));
-    const {data: tasks} = useQuery(getTasks(machineTasks ?? []), {
-        enabled: !!machineTasks
-    });
-    const {data: tags} = useQuery(getTags(machineTags ?? []), {
-        enabled: !!machineTags
-    });
-
+    const {tasks} = useTasks(machine.id);
+    const {tags} = useTags(machine.id);
 
     let openMachine = () => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});
