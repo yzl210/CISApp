@@ -1,10 +1,10 @@
 import {supabase} from "./supabase";
-import {useQuery, useUpdateMutation} from "@supabase-cache-helpers/postgrest-react-query";
+import {useInsertMutation, useQuery, useUpdateMutation} from "@supabase-cache-helpers/postgrest-react-query";
 
 const machineColumns = "id,created_at,updated_at,name,brand,model,serial,location,description,image";
 const machineTaskColumns = "machine,task";
 const taskColumns = "id,created_at,name,description,done_at,done_by";
-const machineTagColumns = "machine,tag";
+const machineTagColumns = "machine,tag,created_at,created_by";
 const tagColumns = "id,created_at,created_by,name,color";
 
 export function getAllMachines() {
@@ -120,6 +120,8 @@ export interface MachineTask {
 export interface MachineTag {
     machine: string;
     tag: string;
+    created_at: Date;
+    created_by?: string;
 }
 
 export interface Tag {
@@ -130,14 +132,18 @@ export interface Tag {
     color: number;
 }
 
-export function getTags(tags: MachineTag[], done?: boolean) {
+export function getAllTags() {
+    return supabase
+        .from('tags')
+        .select<typeof tagColumns, Tag>(tagColumns);
+}
+
+export function getTags(tags: MachineTag[]) {
     return getTagsByIds(tags.map(t => t.tag));
 }
 
 export function getTagsByIds(tag_id: string[]) {
-    return supabase
-        .from('tags')
-        .select<typeof tagColumns, Tag>(tagColumns)
+    return getAllTags()
         .in('id', tag_id)
 }
 
@@ -146,6 +152,12 @@ export function getMachineTags(machine_id: string) {
         .from('machine_tags')
         .select<typeof machineTagColumns, MachineTag>(machineTagColumns)
         .eq('machine', machine_id);
+}
+
+export function useAllTags() {
+    const {data: tags, status: tagsStatus, error: tagsError} = useQuery(getAllTags());
+    return {tags, tagsStatus, tagsError};
+
 }
 
 export function useTags(machine_id: string) {
@@ -159,4 +171,8 @@ export function useTags(machine_id: string) {
     });
 
     return {machineTags, machineTagsStatus, machineTagsError, tags, tagsStatus, tagsError};
+}
+
+export function useInsertMachineTags() {
+    return useInsertMutation(supabase.from('machine_tags'), ['machine', 'tag'], machineTagColumns);
 }

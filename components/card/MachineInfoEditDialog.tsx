@@ -43,6 +43,7 @@ export default function MachineInfoEditDialog({machine, children}: { machine: Ma
         }).then(() => {
             setStatus('closed')
         }).catch(e => {
+            alert(e)
             setStatus('editing')
         })
     }

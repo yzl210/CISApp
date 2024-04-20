@@ -1,5 +1,9 @@
 import {UserRole} from "./API";
 
-export function canEditMachine(role: UserRole) {
+export function canEditMachineInfo(role: UserRole) {
+    return role.role === "admin";
+}
+
+export function canEditTags(role: UserRole) {
     return role.role === "admin";
 }

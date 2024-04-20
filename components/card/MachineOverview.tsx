@@ -29,7 +29,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                 </XStack>
                 {tags && tags.length > 0 ? <Separator marginVertical={"$2"}/> : null}
                 {tags ? <XStack>
-                    {tags.map(tag => <TagComponent tag={tag}/>)}
+                    {tags.map(tag => <TagComponent tag={tag} key={tag.id}/>)}
                 </XStack> : null}
                 {tasks && tasks.length > 0 ? <Separator marginVertical={"$2"}/> : null}
                 {tasks ? <FlatList data={tasks} renderItem={({item: task}) => (
@@ -37,7 +37,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                         <Dot scale={2}/>
                         <Text alignSelf={"center"}>{task.name}</Text>
                     </XStack>
-                )} scrollEnabled={false}/> : <Spinner/>}
+                )} scrollEnabled={false} keyExtractor={item => item.id}/> : <Spinner/>}
             </Card.Header>
         </Card>
     );

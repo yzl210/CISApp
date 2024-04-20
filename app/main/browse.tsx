@@ -5,6 +5,7 @@ import {router} from "expo-router";
 import {Machine, Tag, useAllMachines, useTags} from "../../api/machine";
 import Loading from "../../components/Loading";
 import TagComponent from "../../components/TagComponent";
+import {search} from "../../api/utils";
 
 export default function Browse() {
     const [query, setQuery] = useState('');
@@ -26,18 +27,6 @@ export default function Browse() {
                 <Loading/>}
         </View>
     );
-}
-
-function search(string: string, query: string) {
-    const mainLength: number = string.length;
-    let searchIndex: number = 0;
-
-    for (let i = 0; i < mainLength && searchIndex < query.length; i++) {
-        if (query[searchIndex] === ' ' || query[searchIndex].toLowerCase() === string[i].toLowerCase()) {
-            searchIndex++;
-        }
-    }
-    return searchIndex === query.length;
 }
 
 function MachineList({query, machines}: { query: string, machines: Machine[] }) {

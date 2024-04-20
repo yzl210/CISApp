@@ -11,7 +11,7 @@ import React from "react";
 import {FlatList} from "react-native";
 import {Log} from "../api/API";
 import MaintenanceLog from "../components/card/MaintenanceLog";
-import MachineTags from "../components/card/MachineTags";
+import MachineTags from "../components/card/tag/MachineTags";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -117,7 +117,7 @@ function MachineInformation({machine}: { machine: Machine }) {
 
     return <View margin={"$2"} gap={"$2"}>
         <MachineInfo machine={machine}/>
-        {tags && tags.length > 0 ? <MachineTags tags={tags}/> : null}
+        {tags && tags.length > 0 ? <MachineTags machine={machine} tags={tags}/> : null}
     </View>
 }
 
@@ -151,8 +151,11 @@ function TaskList({machine_id}: { machine_id: string }) {
                 </XStack>
             </Card.Header>
             <Separator/>
-            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}} data={todoTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
+                      data={todoTasks}
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      keyExtractor={item => item.id}
+            />
         </Card>
         <Separator marginVertical={"$2"}/>
         <Card height={"50%"}>
@@ -163,8 +166,11 @@ function TaskList({machine_id}: { machine_id: string }) {
                 </XStack>
             </Card.Header>
             <Separator/>
-            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}} data={todoTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
+                      data={todoTasks}
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      keyExtractor={item => item.id}
+            />
         </Card>
     </>;
 }
@@ -201,13 +207,17 @@ function TaskTab({machine_id}: { machine_id: string }) {
         <Tabs.Content value={"todos"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={todoTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      keyExtractor={item => item.id}
+            />
         </Tabs.Content>
 
         <Tabs.Content value={"done"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={doneTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}/>
+                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      keyExtractor={item => item.id}
+            />
         </Tabs.Content>
     </Tabs>
 }
@@ -224,7 +234,7 @@ function LogsTab({machine_id}: { machine_id: string }) {
     }
 
     return <View height={"100%"}>
-        <FlatList data={[log]} renderItem={item => <MaintenanceLog log={item.item}/>}></FlatList>
+        <FlatList data={[log]} renderItem={item => <MaintenanceLog log={item.item}/>} keyExtractor={item => item.id}/>
     </View>
 }
 
