@@ -22,7 +22,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                 <XStack>
                     <View alignSelf={"center"} maxWidth={"$19"}>
                         <H3 alignSelf={"center"}>{machine.name}</H3>
-                        {machine.model ? <H5 color={"gray"} alignSelf={"center"}>{machine.model}</H5> : null}
+                        {machine.model ? <H5 color={"grey"} alignSelf={"center"}>{machine.model}</H5> : null}
                     </View>
                     <Separator vertical marginHorizontal={"$3"}/>
                     <Image source={{uri: machine.image, width: 100, height: 100}}></Image>
