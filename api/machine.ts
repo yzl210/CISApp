@@ -1,5 +1,10 @@
 import {supabase} from "./supabase";
-import {useInsertMutation, useQuery, useUpdateMutation} from "@supabase-cache-helpers/postgrest-react-query";
+import {
+    useDeleteMutation,
+    useInsertMutation,
+    useQuery,
+    useUpdateMutation
+} from "@supabase-cache-helpers/postgrest-react-query";
 
 const machineColumns = "id,created_at,updated_at,name,brand,model,serial,location,description,image";
 const machineTaskColumns = "machine,task";
@@ -154,6 +159,17 @@ export function getMachineTags(machine_id: string) {
         .eq('machine', machine_id);
 }
 
+export function useMachineTag(machine_id: string, tag_id: string) {
+    return useQuery(
+        supabase
+            .from('machine_tags')
+            .select<typeof machineTagColumns, MachineTag>(machineTagColumns)
+            .eq('machine', machine_id)
+            .eq('tag', tag_id)
+            .single()
+    );
+}
+
 export function useAllTags() {
     const {data: tags, status: tagsStatus, error: tagsError} = useQuery(getAllTags());
     return {tags, tagsStatus, tagsError};
@@ -175,4 +191,8 @@ export function useTags(machine_id: string) {
 
 export function useInsertMachineTags() {
     return useInsertMutation(supabase.from('machine_tags'), ['machine', 'tag'], machineTagColumns);
+}
+
+export function useDeleteMachineTag() {
+    return useDeleteMutation(supabase.from('machine_tags'), ['machine', 'tag'], machineTagColumns);
 }

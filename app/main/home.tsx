@@ -1,4 +1,4 @@
-import MachineOverview from "../../components/card/MachineOverview";
+import MachineOverview from "../../components/card/machine/MachineOverview";
 import React from "react";
 import {ScrollView, SizableText, Tabs, View} from "tamagui";
 import {AlertTriangle, Pin} from "@tamagui/lucide-icons";

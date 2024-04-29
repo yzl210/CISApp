@@ -1,9 +1,9 @@
 import {router} from "expo-router";
 import {Card, H3, H5, Image, Separator, Spinner, Text, View, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
-import {Machine, useTags, useTasks} from "../../api/machine";
+import {Machine, useTags, useTasks} from "../../../api/machine";
 import {FlatList} from "react-native";
-import TagComponent from "../TagComponent";
+import TagComponent from "../../TagComponent";
 
 
 export default function MachineOverview({machine}: { machine: Machine }) {
@@ -28,7 +28,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                     <Image source={{uri: machine.image, width: 100, height: 100}}></Image>
                 </XStack>
                 {tags && tags.length > 0 ? <Separator marginVertical={"$2"}/> : null}
-                {tags ? <XStack>
+                {tags ? <XStack gap={"$2"} flexWrap={"wrap"}>
                     {tags.map(tag => <TagComponent tag={tag} key={tag.id}/>)}
                 </XStack> : null}
                 {tasks && tasks.length > 0 ? <Separator marginVertical={"$2"}/> : null}

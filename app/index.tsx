@@ -6,14 +6,9 @@ export default function Index() {
     const {session, error} = useSession();
 
     if (error) {
-        alert(error.message);
         router.replace("login");
-        return null;
-    }
-
-    if (session) {
+    } else if (session) {
         router.replace("main");
-        return null;
     }
 
     return <Loading/>

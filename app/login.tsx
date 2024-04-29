@@ -9,6 +9,10 @@ import {LmInput} from "@tamagui-extras/form";
 import {useHeaderHeight} from '@react-navigation/elements';
 import {router} from "expo-router";
 import {supabase} from "../api/supabase";
+import {getUserRole} from "../api/API";
+
+const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+
 
 export default function Layout() {
     const [username, setUsername] = React.useState('');
@@ -25,16 +29,26 @@ export default function Layout() {
         setLoading(true);
         supabase.auth.signInWithPassword({email: username, password: password})
             .then((result) => {
-                setLoading(false);
-                if (result.error)
+                if (result.error) {
+                    setLoading(false);
                     alert(result.error);
-                else {
-                    router.replace("/");
+                } else {
+                    getUserRole(result.data.user.id).then(({data: role}) => {
+                        if (!role) {
+                            alert("User role not found");
+                            return;
+                        }
+                        if (role?.role === "new") {
+                            alert("Please wait for your account to be approved");
+                        }
+                        setLoading(false);
+                        router.replace("/");
+                    });
                 }
             });
     }
 
-    let emailValid = username.endsWith("@athenian.org") || username.length === 0;
+    let emailValid = emailRegex.test(username) || username.length === 0;
     let textColor = emailValid ? "black" : "red";
 
     let height = useHeaderHeight();

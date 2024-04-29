@@ -50,6 +50,16 @@ function MachineList({query, machines}: { query: string, machines: Machine[] }) 
     let filtered = machines ? query.length < 1 ? machines : machines
         .filter((m, i) => search(m.name, query) || tagMap.get(m.id)?.some(tag => search(tag.name, query))) : []
 
+    let tagList = (machine_id: string) => {
+        let tags = tagComponents.get(machine_id);
+        if (!tags || tags.length < 1) {
+            return null;
+        }
+        return <XStack gap={"$2"}>
+            {tags}
+        </XStack>
+    }
+
     let openMachine = (machine: Machine) => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});
     }
@@ -61,7 +71,7 @@ function MachineList({query, machines}: { query: string, machines: Machine[] }) 
                 <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
                 <Text fontSize={20}>{item.item.name}</Text>
                 <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
-                {tagComponents.get(item.item.id)}
+                {tagList(item.item.id)}
             </XStack>
             <Separator backgroundColor={"darkgray"} marginVertical={"$2"}/>
         </View>

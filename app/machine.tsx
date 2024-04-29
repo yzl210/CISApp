@@ -1,6 +1,6 @@
 import {Redirect, Stack, useLocalSearchParams} from "expo-router";
-import MachineInfo from "../components/card/MachineInfo";
-import MachineTask from "../components/card/MachineTask";
+import MachineInfo from "../components/card/machine/MachineInfo";
+import MachineTask from "../components/card/machine/MachineTask";
 import {Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
 import {Info, LayoutList, ListChecks, ListTodo, ScrollText} from "@tamagui/lucide-icons";
 import {getMachineTags, getTags, Machine, useMachine, useTasks} from "../api/machine";
@@ -9,9 +9,11 @@ import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {useIsLandscape} from "../api/utils";
 import React from "react";
 import {FlatList} from "react-native";
-import {Log} from "../api/API";
+import {Log, useRole} from "../api/API";
 import MaintenanceLog from "../components/card/MaintenanceLog";
 import MachineTags from "../components/card/tag/MachineTags";
+import {canEditTags} from "../api/users";
+import MachineDescription from "../components/card/machine/MachineDescription";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -107,17 +109,19 @@ export default function MachinePage() {
 }
 
 function MachineInformation({machine}: { machine: Machine }) {
+    const {role} = useRole();
     const {data: machineTags} = useQuery(getMachineTags(machine.id));
     const {data: tags} = useQuery(getTags(machineTags ?? []), {
         enabled: !!machineTags
     });
 
-    if (!tags)
+    if (!tags || !role)
         return <Loading/>
 
     return <View margin={"$2"} gap={"$2"}>
         <MachineInfo machine={machine}/>
-        {tags && tags.length > 0 ? <MachineTags machine={machine} tags={tags}/> : null}
+        {(tags && tags.length > 0) || canEditTags(role) ? <MachineTags machine={machine} tags={tags}/> : null}
+        <MachineDescription machine={machine}/>
     </View>
 }
 

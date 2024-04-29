@@ -1,9 +1,9 @@
-import {Input, Popover, Text, YStack} from "tamagui";
+import {Input, Popover, Spinner, Text, XStack, YStack} from "tamagui";
 import {Machine, Tag, useAllTags, useInsertMachineTags} from "../../../api/machine";
 import React, {useState} from "react";
 import Loading from "../../Loading";
-import {FlatList, TouchableOpacity} from "react-native";
-import TagComponent from "../../TagComponent";
+import {FlatList} from "react-native";
+import {TouchableTagComponent} from "../../TagComponent";
 import {search} from "../../../api/utils";
 
 export default function AddTagPopover({machine, tags: currentTags, children}: {
@@ -12,6 +12,7 @@ export default function AddTagPopover({machine, tags: currentTags, children}: {
     children: React.ReactNode
 }) {
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false)
     const [filter, setFilter] = useState('')
 
     const {tags} = useAllTags();
@@ -24,9 +25,12 @@ export default function AddTagPopover({machine, tags: currentTags, children}: {
     }
 
     let select = (tag: Tag) => {
-        setOpen(false);
+        if (loading) return;
+        setLoading(true);
         insertMachineTags([{machine: machine.id, tag: tag.id}])
-            .catch(e => alert(e));
+            .then(() => setOpen(false))
+            .catch(e => alert(e))
+            .finally(() => setLoading(false));
     }
 
     let filteredTags = tags.filter(tag => !currentTags.find(t => t.id === tag.id));
@@ -35,11 +39,13 @@ export default function AddTagPopover({machine, tags: currentTags, children}: {
 
     return <Content trigger={children} open={open} setOpen={setOpen}>
         <YStack gap={"$2.5"}>
-            <Text>Add Tag</Text>
+            <XStack gap={"$2"}>
+                <Text>Add Tag</Text>
+                {loading ? <Spinner/> : null}
+            </XStack>
             <Input value={filter} onChangeText={setFilter} height={"$2"} placeholder={"Search Tag"} borderRadius={5}/>
             <FlatList data={filteredTags} contentContainerStyle={{gap: 5}}
-                      renderItem={item => <TouchableOpacity onPress={() => select(item.item)}><TagComponent
-                          tag={item.item}/></TouchableOpacity>}
+                      renderItem={item => <TouchableTagComponent tag={item.item} onPress={select}/>}
                       keyExtractor={item => item.id}/>
         </YStack>
     </Content>

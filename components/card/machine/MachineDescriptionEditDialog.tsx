@@ -1,19 +1,17 @@
-import {Machine, useUpdateMachine} from "../../api/machine";
-import {Dialog, XStack, YStack} from "tamagui";
+import {Machine, useUpdateMachine} from "../../../api/machine";
+import {Dialog, XStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
-import {LmInput} from "@tamagui-extras/form";
+import {MarkdownTextInput} from "@expensify/react-native-live-markdown";
 
-export default function MachineInfoEditDialog({machine, children}: { machine: Machine, children: React.ReactNode }) {
+export default function MachineDescriptionEditDialog({machine, children}: {
+    machine: Machine,
+    children: React.ReactNode
+}) {
     const {mutateAsync: updateMachine} = useUpdateMachine();
-
     const [status, setStatus] = useState<'editing' | 'loading' | 'closed'>('closed')
-    const [name, setName] = useState(machine.name)
-    const [brand, setBrand] = useState(machine.brand ?? "")
-    const [model, setModel] = useState(machine.model ?? "")
-    const [serial, setSerial] = useState(machine.serial ?? "")
-    const [location, setLocation] = useState(machine.location ?? "")
+    const [text, setText] = useState(machine.description ?? "")
 
     let openChange = (open: boolean) => {
         if (open)
@@ -22,25 +20,12 @@ export default function MachineInfoEditDialog({machine, children}: { machine: Ma
 
     let cancel = () => {
         setStatus('closed')
-        setName(machine.name)
-        setBrand(machine.brand ?? "")
-        setModel(machine.model ?? "")
-        setSerial(machine.serial ?? "")
-        setLocation(machine.location ?? "")
+        setText(machine.description ?? "")
     }
 
     let confirm = () => {
         setStatus('loading')
-        let emptyToNull = (value: string) => value.length > 0 ? value : undefined
-
-        updateMachine({
-            name,
-            id: machine.id,
-            brand: emptyToNull(brand),
-            model: emptyToNull(model),
-            serial: emptyToNull(serial),
-            location: emptyToNull(location)
-        }).then(() => {
+        updateMachine({id: machine.id, description: text.length > 0 ? text : null}).then(() => {
             setStatus('closed')
         }).catch(e => {
             alert(e)
@@ -66,20 +51,21 @@ export default function MachineInfoEditDialog({machine, children}: { machine: Ma
         </Dialog.Trigger>
         <Dialog.Portal>
             <Dialog.Overlay disabled/>
-            <Dialog.Content bordered elevate key={"content"}>
+            <Dialog.Content bordered elevate key={"content"} maxHeight={700}>
                 <Dialog.Title>
-                    Edit Machine Info
+                    Edit Machine Description
                 </Dialog.Title>
                 <Dialog.Description alignItems={"center"}>
                     Editing {machine.name}
                 </Dialog.Description>
-                <YStack gap={"$2"}>
-                    <LmInput label={"Name"} value={name} onChangeText={setName} labelInline/>
-                    <LmInput label={"Brand"} value={brand} onChangeText={setBrand} labelInline/>
-                    <LmInput label={"Model"} value={model} onChangeText={setModel} labelInline/>
-                    <LmInput label={"Serial No."} value={serial} onChangeText={setSerial} labelInline/>
-                    <LmInput label={"Location"} value={location} onChangeText={setLocation} labelInline/>
-                </YStack>
+
+                <MarkdownTextInput
+                    value={text}
+                    onChangeText={setText}
+                    style={{padding: 5, minHeight: 200, maxWidth: 700}}
+                    multiline
+                />
+
                 <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
                     <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={<XCircle/>}>
                         Cancel

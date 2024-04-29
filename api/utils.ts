@@ -1,8 +1,12 @@
-import {useWindowDimensions} from "react-native"
+import {Platform, useWindowDimensions} from "react-native"
 
 export function useIsLandscape() {
     const {height, width} = useWindowDimensions()
     return width > height
+}
+
+export function useIsMobile() {
+    return Platform.OS === 'ios' || Platform.OS === 'android';
 }
 
 export function search(string: string, query: string) {

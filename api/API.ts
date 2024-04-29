@@ -27,7 +27,7 @@ export async function getSession(): Promise<Session> {
 export function getUser(id: string) {
     return supabase
         .from('users')
-        .select(userColumns)
+        .select<typeof userColumns, User>(userColumns)
         .eq('id', id)
         .single();
 }
@@ -40,18 +40,18 @@ export function getUserRole(user_id: string) {
         .single();
 }
 
-export function useUser() {
+export function useUser(user_id?: string) {
     const session = useSession();
-    const {data: user, error} = useQuery(getUser(session.session ? session.session.user.id : ""), {
-        enabled: !!session
+    const {data: user, error} = useQuery(getUser(session.session?.user.id ?? ""), {
+        enabled: !!session.session?.user.id
     });
     return {user, error, session};
 }
 
 export function useRole() {
     const user = useUser();
-    const {data: role, error} = useQuery(getUserRole(user.user ? user.user.id : ""), {
-        enabled: !!user
+    const {data: role, error} = useQuery(getUserRole(user.user?.id ?? ""), {
+        enabled: !!user.user?.id
     });
     return {role, error, user};
 }

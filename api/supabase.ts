@@ -23,16 +23,22 @@ export function useSession() {
     const [error, setError] = useState<Error>()
 
     useEffect(() => {
-        supabase.auth.getSession().then(({data, error}) => {
-            if (data && data.session)
-                setSession(data.session);
-            if (error)
-                setError(error);
-
-        }).catch(() => {
-            setError(new Error("No session found"));
+        supabase.auth.getSession()
+            .then(({data, error}) => {
+                if (data && data.session)
+                    setSession(data.session);
+                else if (error)
+                    setError(error);
+                else
+                    setError(new Error("No session found"));
+            }).catch(e => {
+            setError(e);
         });
     }, [])
+
+    setTimeout(() => {
+        setError(new Error("Session fetch timed out"));
+    }, 5000);
 
     return {session, error};
 }
