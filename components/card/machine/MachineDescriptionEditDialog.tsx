@@ -1,9 +1,10 @@
 import {Machine, useUpdateMachine} from "../../../api/machine";
-import {Dialog, XStack} from "tamagui";
+import {Adapt, Dialog, Sheet, XStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
-import {MarkdownTextInput} from "@expensify/react-native-live-markdown";
+import Editor from "../../Editor";
+import {useIsWeb} from "../../../api/utils";
 
 export default function MachineDescriptionEditDialog({machine, children}: {
     machine: Machine,
@@ -12,11 +13,17 @@ export default function MachineDescriptionEditDialog({machine, children}: {
     const {mutateAsync: updateMachine} = useUpdateMachine();
     const [status, setStatus] = useState<'editing' | 'loading' | 'closed'>('closed')
     const [text, setText] = useState(machine.description ?? "")
+    const isWeb = useIsWeb();
 
     let openChange = (open: boolean) => {
         if (open)
             setStatus('editing')
+        else if (!isWeb) {
+            cancel();
+            setStatus('closed')
+        }
     }
+
 
     let cancel = () => {
         setStatus('closed')
@@ -34,18 +41,18 @@ export default function MachineDescriptionEditDialog({machine, children}: {
     }
 
     return <Dialog modal open={status !== 'closed'} onOpenChange={openChange}>
-        {/*<Adapt when="sm" platform="touch">*/}
-        {/*    <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>*/}
-        {/*        <Sheet.Frame padding="$4" gap="$4">*/}
-        {/*            <Adapt.Contents />*/}
-        {/*        </Sheet.Frame>*/}
-        {/*        <Sheet.Overlay*/}
-        {/*            animation="lazy"*/}
-        {/*            enterStyle={{ opacity: 0 }}*/}
-        {/*            exitStyle={{ opacity: 0 }}*/}
-        {/*        />*/}
-        {/*    </Sheet>*/}
-        {/*</Adapt>*/}
+        <Adapt when="sm" platform="touch">
+            <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
+                <Sheet.Frame padding="$4" gap="$4">
+                    <Adapt.Contents/>
+                </Sheet.Frame>
+                <Sheet.Overlay
+                    animation="lazy"
+                    enterStyle={{opacity: 0}}
+                    exitStyle={{opacity: 0}}
+                />
+            </Sheet>
+        </Adapt>
         <Dialog.Trigger asChild>
             {children}
         </Dialog.Trigger>
@@ -59,13 +66,7 @@ export default function MachineDescriptionEditDialog({machine, children}: {
                     Editing {machine.name}
                 </Dialog.Description>
 
-                <MarkdownTextInput
-                    value={text}
-                    onChangeText={setText}
-                    style={{padding: 5, minHeight: 200, maxWidth: 700}}
-                    multiline
-                />
-
+                <Editor initialContent={text} onContentChange={setText}/>
                 <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
                     <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={<XCircle/>}>
                         Cancel

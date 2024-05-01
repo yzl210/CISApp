@@ -1,10 +1,11 @@
 import MachineOverview from "../../components/card/machine/MachineOverview";
 import React from "react";
-import {ScrollView, SizableText, Tabs, View} from "tamagui";
+import {SizableText, Tabs} from "tamagui";
 import {AlertTriangle, Pin} from "@tamagui/lucide-icons";
 import {getMaintenanceNeeded, getPins, Machine} from "../../api/machine";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import Loading from "../../components/Loading";
+import {LmGrid} from "@tamagui-extras/core";
 
 export default function HomeScreen() {
     const {data: pins} = useQuery(getPins());
@@ -41,10 +42,8 @@ export default function HomeScreen() {
 
 function MachineCategory({value, machines}: { value: string, machines: Machine[] }) {
     return <Tabs.Content height={"100%"} value={value} alignItems={"center"}>
-        <ScrollView>
-            <View gap={"$3"} flex={1} flexDirection={"row"} flexWrap={"wrap"} justifyContent={"center"}>
-                {machines.map(machine => <MachineOverview key={machine.id} machine={machine}/>)}
-            </View>
-        </ScrollView>
+        <LmGrid container row flexWrap={"wrap"} gap={"$3"} justifyContent={"center"}>
+            {machines.map(machine => <LmGrid key={machine.id}><MachineOverview machine={machine}/></LmGrid>)}
+        </LmGrid>
     </Tabs.Content>
 }

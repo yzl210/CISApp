@@ -23,7 +23,7 @@ export default function MachineInfo({machine}: { machine: Machine }) {
                 <H2 textAlign={"center"}>{machine.name}</H2>
                 <Text color={"gray"} textAlign={"center"}>{subtitle}</Text>
                 {canEditMachineInfo(role) ? <MachineInfoEditDialog machine={machine}>
-                    <Button alignSelf={"flex-end"} position={"absolute"} icon={Edit3}/>
+                    <Button top={"$3"} right={"$3"} position={"absolute"} icon={Edit3}/>
                 </MachineInfoEditDialog> : null}
             </Card.Header>
             <Separator marginBottom={"$2.5"}/>

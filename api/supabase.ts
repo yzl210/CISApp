@@ -36,9 +36,7 @@ export function useSession() {
         });
     }, [])
 
-    setTimeout(() => {
-        setError(new Error("Session fetch timed out"));
-    }, 5000);
+
 
     return {session, error};
 }

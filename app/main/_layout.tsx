@@ -1,5 +1,5 @@
 import {Tabs} from "expo-router";
-import {CameraOff, Home, List, Settings} from "@tamagui/lucide-icons";
+import {Camera, Home, List, Settings} from "@tamagui/lucide-icons";
 
 export default function MainLayout() {
     return <Tabs screenOptions={{headerShown: false}}>
@@ -13,15 +13,15 @@ export default function MainLayout() {
             href: "main/browse",
             tabBarIcon: ({size, color}) => <List size={size} color={color}/>
         }}/>
+        <Tabs.Screen name="scan" options={{
+            title: "Scan",
+            href: "main/scan",
+            tabBarIcon: ({size, color}) => <Camera size={size} color={color}/>
+        }}/>
         <Tabs.Screen name="manage" options={{
             title: "Manage",
             href: "main/manage",
-            tabBarIcon: props => <Settings {...props}/>
-        }}/>
-        <Tabs.Screen name="scan" options={{
-            title: "ScAn",
-            href: "main/scan",
-            tabBarIcon: props => <CameraOff {...props}/>
+            tabBarIcon: ({size, color}) => <Settings size={size} color={color}/>
         }}/>
     </Tabs>;
 }

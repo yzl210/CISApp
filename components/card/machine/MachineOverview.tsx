@@ -25,7 +25,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                         {machine.model ? <H5 color={"grey"} alignSelf={"center"}>{machine.model}</H5> : null}
                     </View>
                     <Separator vertical marginHorizontal={"$3"}/>
-                    <Image source={{uri: machine.image, width: 100, height: 100}}></Image>
+                    <Image source={{uri: machine.image, width: 100, height: 100}}/>
                 </XStack>
                 {tags && tags.length > 0 ? <Separator marginVertical={"$2"}/> : null}
                 {tags ? <XStack gap={"$2"} flexWrap={"wrap"}>

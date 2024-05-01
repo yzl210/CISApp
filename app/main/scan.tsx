@@ -1,57 +1,51 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
-import { CameraView, Camera } from "expo-camera/next";
-import {getMachine} from "../../api/machine";
-import {getSession} from "../../api/API";
+import React, {useEffect, useState} from "react";
+import {Button, H2, View} from "tamagui";
+import {BarcodeScanningResult, Camera, CameraView} from "expo-camera/next";
 import {router} from "expo-router";
+import Loading from "../../components/Loading";
+import {StyleSheet} from "react-native";
 
-export default function App() {
-    const [hasPermission, setHasPermission] = useState<boolean>(false);
+export default function Scan() {
+    const [status, setStatus] = useState<'granted' | 'undetermined' | 'denied'>('undetermined');
     const [scanned, setScanned] = useState(false);
 
     useEffect(() => {
-        const getCameraPermissions = async () => {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            setHasPermission(status === "granted");
-        };
-
-        getCameraPermissions().then();
+        Camera.requestCameraPermissionsAsync()
+            .then(({status}) => {
+                setStatus(status);
+            })
     }, []);
 
 
+    if (status === 'undetermined') {
+        return <Loading/>
+    }
 
-    const handleBarCodeScanned = ({ data }:any) => {
+    if (status === 'denied') {
+        return <View justifyContent={"center"} height={"100%"} alignItems={"center"}>
+            <H2>Camera access denied</H2>
+        </View>
+    }
+
+    const handleBarCodeScanned = ({data}: BarcodeScanningResult) => {
         setScanned(true);
         router.navigate({pathname: '/machine', params: {id: data}});
     };
 
-    if (hasPermission === null) {
-        return <Text>Requesting for camera permission</Text>;
-    }
-    if (!hasPermission) {
-        return <Text>No access to camera</Text>;
-    }
-
     return (
-        <View style={styles.container}>
+        <View style={StyleSheet.absoluteFillObject}>
             <CameraView
                 onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
                 barcodeScannerSettings={{
-                    barcodeTypes: ["qr", "pdf417"],
+                    barcodeTypes: ["qr"],
                 }}
                 style={StyleSheet.absoluteFillObject}
             />
             {scanned && (
-                <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
+                <Button onPress={() => setScanned(false)}>
+                    Tap to Scan Again
+                </Button>
             )}
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "center",
-    },
-});

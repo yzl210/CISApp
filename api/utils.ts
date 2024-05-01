@@ -5,8 +5,8 @@ export function useIsLandscape() {
     return width > height
 }
 
-export function useIsMobile() {
-    return Platform.OS === 'ios' || Platform.OS === 'android';
+export function useIsWeb() {
+    return Platform.OS === 'web';
 }
 
 export function search(string: string, query: string) {
