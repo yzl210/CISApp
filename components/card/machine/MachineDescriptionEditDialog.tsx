@@ -1,10 +1,11 @@
 import {Machine, useUpdateMachine} from "../../../api/machine";
-import {Adapt, Dialog, Sheet, XStack} from "tamagui";
+import {Dialog, XStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
 import Editor from "../../Editor";
 import {useIsWeb} from "../../../api/utils";
+import SimpleDialog from "../SimpleDialog";
 
 export default function MachineDescriptionEditDialog({machine, children}: {
     machine: Machine,
@@ -40,42 +41,21 @@ export default function MachineDescriptionEditDialog({machine, children}: {
         })
     }
 
-    return <Dialog modal open={status !== 'closed'} onOpenChange={openChange}>
-        <Adapt when="sm" platform="touch">
-            <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
-                <Sheet.Frame padding="$4" gap="$4">
-                    <Adapt.Contents/>
-                </Sheet.Frame>
-                <Sheet.Overlay
-                    animation="lazy"
-                    enterStyle={{opacity: 0}}
-                    exitStyle={{opacity: 0}}
-                />
-            </Sheet>
-        </Adapt>
-        <Dialog.Trigger asChild>
-            {children}
-        </Dialog.Trigger>
-        <Dialog.Portal>
-            <Dialog.Overlay disabled/>
-            <Dialog.Content bordered elevate key={"content"} maxHeight={700}>
-                <Dialog.Title>
-                    Edit Machine Description
-                </Dialog.Title>
-                <Dialog.Description alignItems={"center"}>
-                    Editing {machine.name}
-                </Dialog.Description>
-
-                <Editor initialContent={text} onContentChange={setText}/>
-                <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
-                    <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={<XCircle/>}>
-                        Cancel
-                    </LmButton>
-                    <LmButton theme={"green"} onPress={confirm} loading={status === 'loading'} icon={<CheckCircle/>}>
-                        Confirm
-                    </LmButton>
-                </XStack>
-            </Dialog.Content>
-        </Dialog.Portal>
-    </Dialog>
+    return <SimpleDialog open={status !== 'closed'} onOpenChange={openChange} trigger={children}>
+        <Dialog.Title>
+            Edit Machine Description
+        </Dialog.Title>
+        <Dialog.Description>
+            Editing {machine.name}
+        </Dialog.Description>
+        <Editor initialContent={text} onContentChange={setText}/>
+        <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
+            <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={XCircle}>
+                Cancel
+            </LmButton>
+            <LmButton theme={"green"} onPress={confirm} loading={status === 'loading'} icon={CheckCircle}>
+                Confirm
+            </LmButton>
+        </XStack>
+    </SimpleDialog>
 }

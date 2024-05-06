@@ -5,7 +5,6 @@ import {Text, View, XStack, YStack} from "tamagui";
 import {AlertCircle, KeyRound, Mail} from "@tamagui/lucide-icons";
 import {LmButton, usePopoverState} from "@tamagui-extras/core";
 import {LmInput} from "@tamagui-extras/form";
-//import {supabase} from "../api/supabase";
 import {useHeaderHeight} from '@react-navigation/elements';
 import {router} from "expo-router";
 import {supabase} from "../api/supabase";

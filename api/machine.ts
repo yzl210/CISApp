@@ -8,7 +8,7 @@ import {
 
 const machineColumns = "id,created_at,updated_at,name,brand,model,serial,location,description,image";
 const machineTaskColumns = "machine,task";
-const taskColumns = "id,created_at,name,description,done_at,done_by";
+const taskColumns = "id,created_at,created_by,name,description,details,done_at,done_by";
 const machineTagColumns = "machine,tag,created_at,created_by";
 const tagColumns = "id,created_at,created_by,name,color";
 
@@ -46,6 +46,10 @@ export function useAllMachines() {
 
 export function useUpdateMachine() {
     return useUpdateMutation(supabase.from('machines'), ['id'], machineColumns);
+}
+
+export function useInsertMachine() {
+    return useInsertMutation(supabase.from('machines'), ['id'], machineColumns);
 }
 
 export function getMachineTasks(machine_id: string) {
@@ -110,8 +114,10 @@ export interface Machine {
 export interface Task {
     id: string;
     created_at: Date;
+    created_by?: string;
     name: string;
     description?: string;
+    details?: string;
     done_at?: Date;
     done_by?: string;
 }
@@ -134,7 +140,7 @@ export interface Tag {
     created_at: Date;
     created_by?: string;
     name: string;
-    color: number;
+    color: string;
 }
 
 export function getAllTags() {

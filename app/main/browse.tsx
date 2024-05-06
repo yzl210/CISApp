@@ -1,26 +1,41 @@
-import {FlatList} from "react-native";
+import {FlatList, Pressable} from "react-native";
 import React, {useState} from "react";
-import {Image, Input, Separator, Text, View, XStack} from "tamagui";
+import {Button, Image, Input, Separator, Text, View, XStack} from "tamagui";
 import {router} from "expo-router";
-import {Machine, Tag, useAllMachines, useTags} from "../../api/machine";
+import {Machine, useAllMachines, useTags} from "../../api/machine";
 import Loading from "../../components/Loading";
 import TagComponent from "../../components/TagComponent";
 import {search} from "../../api/utils";
+import MachineInfoEditDialog from "../../components/card/machine/MachineInfoEditDialog";
+import {Plus} from "@tamagui/lucide-icons";
+import {useRole} from "../../api/API";
+import {canCreateMachine} from "../../api/users";
 
 export default function Browse() {
     const [query, setQuery] = useState('');
     const {machines} = useAllMachines();
+    const {role} = useRole();
 
+    if (!role) {
+        return <Loading/>
+    }
 
     return (
         <View height={"100%"} backgroundColor={"white"}>
-            <View>
+            <XStack>
+                {canCreateMachine(role) ?
+                    <MachineInfoEditDialog create={true}>
+                        <Button theme={"green"} borderTopRightRadius={0} borderBottomRightRadius={0} icon={Plus}/>
+                    </MachineInfoEditDialog> : null}
                 <Input
+                    borderTopLeftRadius={0}
+                    borderBottomLeftRadius={0}
+                    width={"100%"}
                     placeholder={"Search..."}
                     value={query}
                     onChangeText={setQuery}
                 />
-            </View>
+            </XStack>
             <Separator marginVertical={"$1"}/>
             {machines ? <MachineList query={query}
                                      machines={machines}/> :
@@ -35,47 +50,32 @@ function MachineList({query, machines}: { query: string, machines: Machine[] }) 
         return <Text color={"gray"} alignSelf={"center"} marginVertical={"$2"}>No result</Text>;
     }
 
-    let tagMap = new Map<string, Tag[]>();
-
-    machines.forEach(machine => {
-        const {tags} = useTags(machine.id);
-        if (tags)
-            tagMap.set(machine.id, tags);
-    });
-
-    let tagComponents = new Map<string, React.JSX.Element[]>();
-    tagMap.forEach((tags, id) =>
-        tagComponents.set(id, tags.map(tag => <TagComponent key={tag.id} tag={tag}/>)));
-
     let filtered = machines ? query.length < 1 ? machines : machines
-        .filter((m, i) => search(m.name, query) || tagMap.get(m.id)?.some(tag => search(tag.name, query))) : []
+        .filter((m, i) => search(m.name, query)) : []
 
-    let tagList = (machine_id: string) => {
-        let tags = tagComponents.get(machine_id);
-        if (!tags || tags.length < 1) {
-            return null;
-        }
-        return <XStack gap={"$2"}>
-            {tags}
-        </XStack>
-    }
+    return <FlatList data={filtered} renderItem={(item) => <MachineEntry machine={item.item}/>}/>;
+}
 
-    let openMachine = (machine: Machine) => {
+function MachineEntry({machine}: { machine: Machine }) {
+    const {tags} = useTags(machine.id);
+
+
+    let openMachine = () => {
         router.navigate({pathname: '/machine', params: {id: machine.id}});
     }
 
-    return <FlatList data={filtered} renderItem={(item) => {
-        return <View key={item.item.id} onPress={() => openMachine(item.item)}>
-            <XStack alignItems={"center"}>
-                <Image source={{uri: item.item.image, width: 50, height: 50}}/>
-                <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
-                <Text fontSize={20}>{item.item.name}</Text>
-                <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
-                {tagList(item.item.id)}
+    return <Pressable onPress={openMachine}>
+        <View key={machine.id}>
+            <XStack marginHorizontal={"$2"} alignItems={"center"} gap={"$2"} flexWrap={"wrap"}>
+                <Image source={{uri: machine.image, width: 50, height: 50}}/>
+                <Separator backgroundColor={"darkgray"} vertical/>
+                <Text fontSize={20}>{machine.name}</Text>
+                <Separator backgroundColor={"darkgray"} vertical/>
+                {tags ? tags.map(tag => <TagComponent key={tag.id} tag={tag}/>) : null}
             </XStack>
             <Separator backgroundColor={"darkgray"} marginVertical={"$2"}/>
         </View>
-    }}/>;
+    </Pressable>
 }
 
 function Section({text}: { text: string | undefined }) {

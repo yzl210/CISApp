@@ -5,16 +5,11 @@ import {Task} from "../../../api/machine";
 
 export default function MachineTask({task}: { task: Task }) {
 
-    let openTask = () => {
-        alert(task.name + ": " + task.description);
-    }
-
     let icon = task.done_at ? <CheckCircle2 marginHorizontal={"$2"} color={"green"}/> :
         <AlertCircle marginHorizontal={"$2"} color={"red"}/>;
 
     return (
-        <Card elevate bordered hoverStyle={{scale: 0.975}} onPress={openTask} pressStyle={{scale: 0.95}}
-              animation={"quick"}>
+        <Card elevate bordered hoverStyle={{scale: 0.975}} animation={"quick"}>
             <Card.Header>
                 <XStack alignSelf={"flex-start"}>
                     {icon}

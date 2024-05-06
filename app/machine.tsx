@@ -3,17 +3,18 @@ import MachineInfo from "../components/card/machine/MachineInfo";
 import MachineTask from "../components/card/machine/MachineTask";
 import {Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
 import {Info, LayoutList, ListChecks, ListTodo, ScrollText} from "@tamagui/lucide-icons";
-import {getMachineTags, getTags, Machine, useMachine, useTasks} from "../api/machine";
+import {getMachineTags, getTags, Machine, Task, useMachine, useTasks} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {useIsLandscape} from "../api/utils";
 import React from "react";
-import {FlatList} from "react-native";
+import {FlatList, Pressable} from "react-native";
 import {Log, useRole} from "../api/API";
 import MaintenanceLog from "../components/card/MaintenanceLog";
 import MachineTags from "../components/card/tag/MachineTags";
 import {canEditTags} from "../api/users";
 import MachineDescription from "../components/card/machine/MachineDescription";
+import TaskDetailsDialog from "../components/card/task/TaskDetailsDialog";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -145,7 +146,6 @@ function TaskList({machine_id}: { machine_id: string }) {
     let todoTasks = tasks.filter(task => !task.done_at);
     let doneTasks = tasks.filter(task => task.done_at);
 
-
     return <>
         <Card height={"50%"}>
             <Card.Header>
@@ -157,7 +157,7 @@ function TaskList({machine_id}: { machine_id: string }) {
             <Separator/>
             <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
                       data={todoTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                       keyExtractor={item => item.id}
             />
         </Card>
@@ -171,8 +171,8 @@ function TaskList({machine_id}: { machine_id: string }) {
             </Card.Header>
             <Separator/>
             <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
-                      data={todoTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      data={doneTasks}
+                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                       keyExtractor={item => item.id}
             />
         </Card>
@@ -211,7 +211,7 @@ function TaskTab({machine_id}: { machine_id: string }) {
         <Tabs.Content value={"todos"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={todoTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                       keyExtractor={item => item.id}
             />
         </Tabs.Content>
@@ -219,11 +219,20 @@ function TaskTab({machine_id}: { machine_id: string }) {
         <Tabs.Content value={"done"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={doneTasks}
-                      renderItem={item => <MachineTask key={item.item.id} task={item.item}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                       keyExtractor={item => item.id}
             />
         </Tabs.Content>
     </Tabs>
+}
+
+function MachineTaskWithDialog({task}: { task: Task }) {
+    return <TaskDetailsDialog key={task.id} task={task}>
+        <Pressable>
+            <MachineTask task={task}/>
+        </Pressable>
+    </TaskDetailsDialog>
+
 }
 
 function LogsTab({machine_id}: { machine_id: string }) {

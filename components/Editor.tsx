@@ -6,6 +6,8 @@ import WebView, {WebViewMessageEvent} from "react-native-webview";
 type EditorProps = {
     initialContent?: string;
     onContentChange: (content: string) => void;
+    width?: number;
+    height?: number;
 }
 
 export default function Editor(props: EditorProps) {
@@ -13,7 +15,7 @@ export default function Editor(props: EditorProps) {
     return isWeb ? <WebEditor {...props}/> : <MobileEditor {...props} />;
 }
 
-function MobileEditor(props: EditorProps) {
+function MobileEditor({onContentChange, initialContent, width = 400, height = 400}: EditorProps) {
     const webView = useRef<WebView>(null);
 
     useEffect(() => {
@@ -25,27 +27,27 @@ function MobileEditor(props: EditorProps) {
         const message = JSON.parse(event.nativeEvent.data);
         switch (message.type) {
             case "LEXICAL_EDITOR_STATE_CHANGE":
-                props.onContentChange(message.payload);
+                onContentChange(message.payload);
                 break;
             case "LEXICAL_EDITOR_READY":
                 webView.current?.postMessage(JSON.stringify({
                     command: "INIT_SERIALIZED_EDITOR_STATE",
-                    payload: props.initialContent,
+                    payload: initialContent,
                 }));
                 break;
         }
     }
 
     return <WebView
+        containerStyle={{width: width, height: height, borderTopLeftRadius: 15, borderTopRightRadius: 15}}
         ref={webView}
         originWhitelist={["*"]}
         source={{html: htmlString}}
-        style={{width: "100%", height: "100%"}}
         onMessage={onMessage}
     />
 }
 
-function WebEditor({initialContent, onContentChange}: EditorProps) {
+function WebEditor({initialContent, onContentChange, width = 600, height = 400}: EditorProps) {
     const iFrame = useRef<HTMLIFrameElement>(null);
 
     useEffect(() => {
@@ -70,6 +72,6 @@ function WebEditor({initialContent, onContentChange}: EditorProps) {
     return <iframe
         ref={iFrame}
         srcDoc={htmlString}
-        style={{width: 600, height: 400, border: 0, borderTopLeftRadius: 15, borderTopRightRadius: 15}}
+        style={{width: width, height: height, border: 0, borderTopLeftRadius: 15, borderTopRightRadius: 15}}
     />;
 }

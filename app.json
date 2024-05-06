@@ -1,8 +1,8 @@
 {
   "expo": {
-    "scheme": "maintenance-tracker",
-    "name": "MaintenanceTracker",
-    "slug": "MaintenanceTracker",
+    "scheme": "cisapp",
+    "name": "CIS App",
+    "slug": "CISApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

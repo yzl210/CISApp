@@ -7,7 +7,7 @@ import React from "react";
 
 
 export default function TagComponent({tag}: { tag: Tag }) {
-    let color = "#" + tag.color.toString(16);
+    let color = "#" + tag.color;
 
 
     return (

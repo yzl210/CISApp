@@ -42,7 +42,7 @@ export default function HomeScreen() {
 
 function MachineCategory({value, machines}: { value: string, machines: Machine[] }) {
     return <Tabs.Content height={"100%"} value={value} alignItems={"center"}>
-        <LmGrid container row flexWrap={"wrap"} gap={"$3"} justifyContent={"center"}>
+        <LmGrid row flexWrap={"wrap"} gap={"$3"} justifyContent={"center"}>
             {machines.map(machine => <LmGrid key={machine.id}><MachineOverview machine={machine}/></LmGrid>)}
         </LmGrid>
     </Tabs.Content>
