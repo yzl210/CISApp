@@ -28,7 +28,7 @@ export default function Layout() {
                         title: "Loading...",
                     }}/>
                     <Stack.Screen name="main" options={{
-                        title: "Maintenance Tracker",
+                        title: "CIS App",
                     }}/>
                     <Stack.Screen name="login" options={{
                         title: "Login",

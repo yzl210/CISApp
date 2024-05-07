@@ -1,8 +1,8 @@
 import {Redirect, Stack, useLocalSearchParams} from "expo-router";
 import MachineInfo from "../components/card/machine/MachineInfo";
 import MachineTask from "../components/card/machine/MachineTask";
-import {Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
-import {Info, LayoutList, ListChecks, ListTodo, ScrollText} from "@tamagui/lucide-icons";
+import {Button, Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
+import {Info, LayoutList, ListChecks, ListTodo, Plus, ScrollText} from "@tamagui/lucide-icons";
 import {getMachineTags, getTags, Machine, Task, useMachine, useTasks} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
@@ -15,6 +15,7 @@ import MachineTags from "../components/card/tag/MachineTags";
 import {canEditTags} from "../api/users";
 import MachineDescription from "../components/card/machine/MachineDescription";
 import TaskDetailsDialog from "../components/card/task/TaskDetailsDialog";
+import TaskEditDialog from "../components/card/task/TaskEditDialog";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -149,17 +150,23 @@ function TaskList({machine_id}: { machine_id: string }) {
     return <>
         <Card height={"50%"}>
             <Card.Header>
-                <XStack gap={"$2"} alignItems={"center"}>
-                    <LayoutList/>
-                    <H2>To Do</H2>
+                <XStack justifyContent={"space-between"}>
+                    <XStack gap={"$2"} alignItems={"center"}>
+                        <LayoutList/>
+                        <H2>To Do</H2>
+                    </XStack>
+                    <TaskEditDialog machine_id={machine_id} create>
+                        <Button icon={Plus}/>
+                    </TaskEditDialog>
                 </XStack>
             </Card.Header>
             <Separator/>
             <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
                       data={todoTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
                       keyExtractor={item => item.id}
             />
+
         </Card>
         <Separator marginVertical={"$2"}/>
         <Card height={"50%"}>
@@ -172,7 +179,7 @@ function TaskList({machine_id}: { machine_id: string }) {
             <Separator/>
             <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
                       data={doneTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
                       keyExtractor={item => item.id}
             />
         </Card>
@@ -211,7 +218,7 @@ function TaskTab({machine_id}: { machine_id: string }) {
         <Tabs.Content value={"todos"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={todoTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
                       keyExtractor={item => item.id}
             />
         </Tabs.Content>
@@ -219,15 +226,15 @@ function TaskTab({machine_id}: { machine_id: string }) {
         <Tabs.Content value={"done"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={doneTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
                       keyExtractor={item => item.id}
             />
         </Tabs.Content>
     </Tabs>
 }
 
-function MachineTaskWithDialog({task}: { task: Task }) {
-    return <TaskDetailsDialog key={task.id} task={task}>
+function MachineTaskWithDialog({machine_id, task}: { machine_id: string, task: Task }) {
+    return <TaskDetailsDialog key={task.id} task={task} machine_id={machine_id}>
         <Pressable>
             <MachineTask task={task}/>
         </Pressable>

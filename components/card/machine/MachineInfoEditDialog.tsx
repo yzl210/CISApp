@@ -1,11 +1,13 @@
-import {Machine, useInsertMachine, useUpdateMachine} from "../../../api/machine";
+import {Machine, useDeleteMachine, useInsertMachine, useUpdateMachine} from "../../../api/machine";
 import {Dialog, Text, XStack, YStack} from "tamagui";
 import React, {useState} from "react";
-import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
+import {CheckCircle, Trash, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
 import {LmInput} from "@tamagui-extras/form";
 import {useIsWeb} from "../../../api/utils";
 import SimpleDialog from "../SimpleDialog";
+import {DeleteConfirmDialog} from "../ConfirmDialog";
+import {router} from "expo-router";
 
 type CreateMachineType = {
     machine?: undefined;
@@ -22,9 +24,10 @@ type EditMachineType = {
 export default function MachineInfoEditDialog({machine, create, children}: CreateMachineType | EditMachineType) {
     const {mutateAsync: updateMachine} = useUpdateMachine();
     const {mutateAsync: insertMachine} = useInsertMachine();
+    const {mutateAsync: deleteMachine} = useDeleteMachine();
 
 
-    const [status, setStatus] = useState<'editing' | 'loading' | 'closed'>('closed')
+    const [status, setStatus] = useState<'editing' | 'confirming' | 'deleting' | 'closed'>('closed')
     const [name, setName] = useState(create ? "New Machine" : machine.name)
     const [brand, setBrand] = useState(create ? "" : machine.brand ?? "")
     const [model, setModel] = useState(create ? "" : machine.model ?? "")
@@ -45,6 +48,7 @@ export default function MachineInfoEditDialog({machine, create, children}: Creat
     let cancel = () => {
         setStatus('closed')
         if (create) {
+            setName("New Machine")
             setBrand("")
             setModel("")
             setSerial("")
@@ -63,7 +67,7 @@ export default function MachineInfoEditDialog({machine, create, children}: Creat
     let confirm = () => {
         if (name.length < 1)
             return;
-        setStatus('loading')
+        setStatus('confirming')
         let emptyToNull = (value: string) => value.length > 0 ? value : null
 
         if (create) {
@@ -98,6 +102,25 @@ export default function MachineInfoEditDialog({machine, create, children}: Creat
         }
     }
 
+    let doDelete = () => {
+        if (create)
+            return;
+
+        setStatus('deleting')
+        deleteMachine({
+            id: machine.id
+        }).then(() => {
+            setStatus('closed')
+            if (router.canGoBack())
+                router.back();
+            else
+                router.replace("/")
+        }).catch(e => {
+            alert(e)
+            setStatus('editing')
+        })
+    }
+
     return <SimpleDialog open={status !== 'closed'} onOpenChange={openChange} trigger={children}>
         <Dialog.Title>
             {create ? "Create New Machine" : "Edit Machine Info"}
@@ -115,10 +138,16 @@ export default function MachineInfoEditDialog({machine, create, children}: Creat
             <LmInput label={"Image"} value={image} onChangeText={setImage} labelInline/>
         </YStack>
         <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
-            <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={<XCircle/>}>
+            {!create ? <DeleteConfirmDialog title={"Machine"} description={machine.name} doDelete={doDelete}>
+                <LmButton theme={"red"} disabled={status !== 'editing'} loading={status === 'deleting'} icon={Trash}>
+                    Delete
+                </LmButton>
+            </DeleteConfirmDialog> : null}
+            <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={XCircle}>
                 Cancel
             </LmButton>
-            <LmButton theme={"green"} onPress={confirm} loading={status === 'loading'} icon={<CheckCircle/>}>
+            <LmButton theme={"green"} onPress={confirm} disabled={status !== 'editing'}
+                      loading={status === 'confirming'} icon={CheckCircle}>
                 Confirm
             </LmButton>
         </XStack>

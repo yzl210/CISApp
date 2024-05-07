@@ -1,7 +1,7 @@
-import {Task} from "../../../api/machine";
-import {Dialog, Separator, Text, XStack} from "tamagui";
+import {Task, useDeleteTask} from "../../../api/machine";
+import {Button, Dialog, Separator, Text, XStack} from "tamagui";
 import React, {useState} from "react";
-import {Edit3, XCircle} from "@tamagui/lucide-icons";
+import {Edit3, Trash, X} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
 import {useIsWeb} from "../../../api/utils";
 import SimpleDialog from "../SimpleDialog";
@@ -11,11 +11,18 @@ import Loading from "../../Loading";
 import {canEditTasks} from "../../../api/users";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {uuid} from "@supabase/supabase-js/dist/main/lib/helpers";
+import TaskEditDialog from "./TaskEditDialog";
+import {DeleteConfirmDialog} from "../ConfirmDialog";
 
-export default function TaskDetailsDialog({task, children}: { task: Task, children: React.ReactNode }) {
-    const [open, setOpen] = useState(false)
+export default function TaskDetailsDialog({machine_id, task, children}: {
+    machine_id: string,
+    task: Task,
+    children: React.ReactNode
+}) {
+    const [status, setStatus] = useState<'editing' | 'loading' | 'closed'>('closed')
     const isWeb = useIsWeb();
     const {role} = useRole()
+    const {mutateAsync: deleteTaskMutation} = useDeleteTask()
 
     const {data: created_by} = useQuery(getUser(task.created_by ?? uuid()), {
         enabled: !!task.created_by
@@ -26,28 +33,28 @@ export default function TaskDetailsDialog({task, children}: { task: Task, childr
     }
 
     let openChange = (open: boolean) => {
-        if (open)
-            setOpen(true)
-        else if (!isWeb) {
-            cancel();
-            setOpen(false)
+        if (status !== 'loading' || !isWeb) {
+            setStatus(open ? 'editing' : 'closed')
         }
     }
 
-    let cancel = () => {
-        setOpen(false)
-    }
-
-    let confirm = () => {
-        setOpen(false)
-        let emptyToNull = (value: string) => value.length > 0 ? value : undefined
+    let deleteTask = () => {
+        setStatus('loading')
+        deleteTaskMutation({id: task.id})
+            .then(() => {
+                setStatus('closed')
+            })
+            .catch(e => {
+                alert(e)
+                setStatus('editing')
+            })
     }
 
     let creationDate = new Date(task.created_at)
     let completionDate = task.done_at ? new Date(task.done_at) : null
 
 
-    return <SimpleDialog open={open} onOpenChange={openChange} trigger={children}>
+    return <SimpleDialog open={status !== 'closed'} onOpenChange={openChange} trigger={children}>
         <Dialog.Title>
             {task.name}
         </Dialog.Title>
@@ -62,11 +69,18 @@ export default function TaskDetailsDialog({task, children}: { task: Task, childr
             <><Separator marginVertical={"$2"}/><RenderHTML source={{html: task.details ?? ""}}/><Separator
                 marginVertical={"$2"}/></> : null}
 
-        <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
-            <LmButton theme={"red"} onPress={cancel} icon={<XCircle/>}>
-                Close
-            </LmButton>
-            {canEditTasks(role) ? <LmButton icon={Edit3}>Edit</LmButton> : null}
-        </XStack>
+        <Button circular position={"absolute"} top={"$3"} right={"$3"} size={"$2"} icon={X}
+                onPress={() => openChange(false)}/>
+
+        {canEditTasks(role) ? <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
+            <DeleteConfirmDialog title={"Task"} description={task.name} doDelete={deleteTask}>
+                <LmButton theme={"red"} icon={Trash} loading={status === 'loading'}>
+                    Delete
+                </LmButton>
+            </DeleteConfirmDialog>
+            <TaskEditDialog machine_id={machine_id} task={task}>
+                <LmButton icon={Edit3}>Edit</LmButton>
+            </TaskEditDialog>
+        </XStack> : null}
     </SimpleDialog>
 }

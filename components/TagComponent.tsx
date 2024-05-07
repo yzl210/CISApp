@@ -9,16 +9,12 @@ import React from "react";
 export default function TagComponent({tag}: { tag: Tag }) {
     let color = "#" + tag.color;
 
-
-    return (
-        <XStack backgroundColor={color} borderRadius={8} padding={"$1"} alignItems={"center"}>
-            <Dot color={newShade(color, -40)} scale={2.5}>
-            </Dot>
-            <Text marginRight={"$2.5"}>
-                {tag.name}
-            </Text>
-        </XStack>
-    );
+    return <XStack backgroundColor={color} borderRadius={8} padding={"$1"} alignItems={"center"}>
+        <Dot color={newShade(color, -40)} scale={2.5}/>
+        <Text marginRight={"$2.5"}>
+            {tag.name}
+        </Text>
+    </XStack>;
 }
 
 export function TouchableTagComponent({tag, onPress}: { tag: Tag, onPress: (tag: Tag) => void }) {

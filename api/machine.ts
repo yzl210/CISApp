@@ -52,6 +52,10 @@ export function useInsertMachine() {
     return useInsertMutation(supabase.from('machines'), ['id'], machineColumns);
 }
 
+export function useDeleteMachine() {
+    return useDeleteMutation(supabase.from('machines'), ['id'], machineColumns);
+}
+
 export function getMachineTasks(machine_id: string) {
     return supabase
         .from('machine_tasks')
@@ -87,6 +91,22 @@ export function useTasks(machine_id: string) {
     });
 
     return {machineTasks, machineTasksStatus, machineTasksError, tasks, tasksStatus, tasksError};
+}
+
+export function useInsertTask() {
+    return useInsertMutation(supabase.from('tasks'), ['id'], taskColumns);
+}
+
+export function useUpdateTask() {
+    return useUpdateMutation(supabase.from('tasks'), ['id'], taskColumns);
+}
+
+export function useDeleteTask() {
+    return useDeleteMutation(supabase.from('tasks'), ['id'], taskColumns);
+}
+
+export function useInsertMachineTask() {
+    return useInsertMutation(supabase.from('machine_tasks'), ['machine', 'task'], machineTaskColumns);
 }
 
 export function getMaintenanceNeeded() {
