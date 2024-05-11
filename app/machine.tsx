@@ -77,6 +77,7 @@ export default function MachinePage() {
             defaultValue={"info"}
             orientation={"horizontal"}
             flexDirection={"column"}
+            height={"100%"}
         >
             <Tabs.List>
                 <Tabs.Tab flex={1} value={"info"} bordered={false}>
@@ -99,8 +100,11 @@ export default function MachinePage() {
                 </ScrollView>
             </Tabs.Content>
 
-            <Tabs.Content value={"tasks"}>
+            <Tabs.Content value={"tasks"} height={"95%"} borderWidth={1}>
                 <TaskTab machine_id={id}/>
+                <TaskEditDialog machine_id={id} create>
+                    <Button bordered bottom={"$3"} alignSelf={"center"} position={"absolute"} icon={Plus}/>
+                </TaskEditDialog>
             </Tabs.Content>
             <Tabs.Content value={"logs"}>
                 <LogsTab machine_id={id}/>
@@ -156,7 +160,7 @@ function TaskList({machine_id}: { machine_id: string }) {
                         <H2>To Do</H2>
                     </XStack>
                     <TaskEditDialog machine_id={machine_id} create>
-                        <Button icon={Plus}/>
+                        <Button bordered icon={Plus}/>
                     </TaskEditDialog>
                 </XStack>
             </Card.Header>
