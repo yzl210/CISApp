@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, H2, Image, Separator, Text, View, XStack} from "tamagui";
+import {Button, Card, H2, Separator, Text, View, XStack} from "tamagui";
 import {Machine} from "../../../api/machine";
 import {Edit3, QrCode} from "@tamagui/lucide-icons";
 import MachineInfoEditDialog from "./MachineInfoEditDialog";
@@ -7,6 +7,8 @@ import {useRole} from "../../../api/API";
 import Loading from "../../Loading";
 import {canEditMachineInfo} from "../../../api/users";
 import MachineQRCodeDialog from "./MachineQRCodeDialog";
+import {Image} from "expo-image";
+import {Dimensions} from "react-native";
 
 export default function MachineInfo({machine}: { machine: Machine }) {
     const {role} = useRole();
@@ -30,6 +32,7 @@ export default function MachineInfo({machine}: { machine: Machine }) {
 
     desc = desc.slice(0, -1)
 
+
     return <>
         <Card elevate bordered>
             <Card.Header>
@@ -46,7 +49,10 @@ export default function MachineInfo({machine}: { machine: Machine }) {
             </Card.Header>
             <Separator marginBottom={"$2.5"}/>
             <View alignSelf={"center"}>
-                <Image source={{uri: machine.image, width: 300, height: 300}}/>
+                <Image source={machine.image} style={{
+                    width: Dimensions.get('window').height * 0.4,
+                    height: Dimensions.get('window').height * 0.4
+                }} contentFit={"contain"}/>
             </View>
         </Card>
     </>;
