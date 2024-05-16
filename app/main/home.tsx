@@ -32,7 +32,6 @@ export default function HomeScreen() {
                     <SizableText>Maintenance Needed</SizableText>
                 </Tabs.Tab>
             </Tabs.List>
-
             <MachineCategory value={"pinned"} machines={pins}/>
             <MachineCategory value={"maintenance-needed"} machines={maintenanceNeeded}/>
 
@@ -41,7 +40,7 @@ export default function HomeScreen() {
 }
 
 function MachineCategory({value, machines}: { value: string, machines: Machine[] }) {
-    return <Tabs.Content height={"100%"} value={value} alignItems={"center"}>
+    return <Tabs.Content marginTop={"$3"} height={"100%"} value={value} alignItems={"center"}>
         <ScrollView>
             <LmGrid row flexWrap={"wrap"} gap={"$3"} justifyContent={"center"}>
                 {machines.map(machine => <LmGrid key={machine.id}><MachineOverview machine={machine}/></LmGrid>)}

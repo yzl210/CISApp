@@ -38,7 +38,7 @@ export default function AddTagPopover({machine, tags: currentTags, children}: {
         filteredTags = filteredTags.filter(tag => search(tag.name, filter));
 
     return <Content trigger={children} open={open} setOpen={setOpen}>
-        <YStack gap={"$2.5"}>
+        <YStack gap={"$2.5"} maxWidth={"$20"}>
             <XStack gap={"$2"}>
                 <Text>Add Tag</Text>
                 {loading ? <Spinner/> : null}

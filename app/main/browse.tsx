@@ -23,21 +23,19 @@ export default function Browse() {
 
     return (
         <View height={"100%"} backgroundColor={"white"}>
-            <XStack>
+            <XStack marginBottom={"$2"}>
                 {canCreateMachine(role) ?
                     <MachineInfoEditDialog create={true}>
-                        <Button theme={"green"} borderTopRightRadius={0} borderBottomRightRadius={0} icon={Plus}/>
+                        <Button theme={"green"} borderRadius={0} icon={Plus}/>
                     </MachineInfoEditDialog> : null}
                 <Input
-                    borderTopLeftRadius={0}
-                    borderBottomLeftRadius={0}
+                    borderRadius={0}
                     width={"100%"}
                     placeholder={"Search..."}
                     value={query}
                     onChangeText={setQuery}
                 />
             </XStack>
-            <Separator marginVertical={"$1"}/>
             {machines ? <MachineList query={query}
                                      machines={machines}/> :
                 <Loading/>}
@@ -46,7 +44,6 @@ export default function Browse() {
 }
 
 function MachineList({query, machines}: { query: string, machines: Machine[] }) {
-
     if (machines.length < 1) {
         return <Text color={"gray"} alignSelf={"center"} marginVertical={"$2"}>No result</Text>;
     }
@@ -77,16 +74,4 @@ function MachineEntry({machine}: { machine: Machine }) {
             <Separator backgroundColor={"darkgray"} marginVertical={"$2"}/>
         </View>
     </Pressable>
-}
-
-function Section({text}: { text: string | undefined }) {
-
-    if (!text) {
-        return null;
-    }
-
-    return <>
-        <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
-        <Text alignSelf={"center"} fontSize={16} color={"gray"}>{text}</Text>
-    </>
 }
