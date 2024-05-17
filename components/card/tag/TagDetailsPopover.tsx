@@ -8,6 +8,7 @@ import {Edit3, Trash} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
 import {canEditTags} from "../../../api/users";
 import {uuid} from "@supabase/supabase-js/dist/main/lib/helpers";
+import TagEditDialog from "./TagEditDialog";
 
 export default function TagDetailsPopover({machine, tag, children}: {
     machine: Machine,
@@ -72,7 +73,9 @@ export default function TagDetailsPopover({machine, tag, children}: {
         </YStack>
         {canEditTags(role) ? <XStack position={"absolute"} top={"$3"} right={"$3"} gap={"$2"}>
             <LmButton loading={deleting} theme={"red"} size={"$2.5"} icon={Trash} onPress={deleteTag}/>
-            <Button size={"$2.5"} icon={Edit3}/>
+            <TagEditDialog tag={tag}>
+                <Button size={"$2.5"} icon={Edit3}/>
+                </TagEditDialog>
         </XStack> : null}
     </Content>
 }

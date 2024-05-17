@@ -6533,6 +6533,11 @@ expo-router@~3.4.8:
     react-helmet-async "^1.3.0"
     schema-utils "^4.0.1"
 
+expo-sharing@^12.0.1:
+  version "12.0.1"
+  resolved "https://registry.npmjs.org/expo-sharing/-/expo-sharing-12.0.1.tgz"
+  integrity sha512-wBT+WeXwapj/9NWuLJO01vi9bdlchYu/Q/xD8slL/Ls4vVYku8CPqzkTtDFcjLrjtlJqyeHsdQXwKLvORmBIew==
+
 expo-splash-screen@0.26.4:
   version "0.26.4"
   resolved "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.26.4.tgz"

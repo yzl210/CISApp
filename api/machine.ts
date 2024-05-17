@@ -222,3 +222,7 @@ export function useInsertMachineTags() {
 export function useDeleteMachineTag() {
     return useDeleteMutation(supabase.from('machine_tags'), ['machine', 'tag'], machineTagColumns);
 }
+
+export function useUpdateMachineTag() {
+    return useUpdateMutation(supabase.from('machines'), ['id'], machineColumns);
+}
