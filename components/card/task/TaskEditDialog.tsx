@@ -67,12 +67,14 @@ export default function TaskEditDialog({machine_id, task, create, children}: Cre
 
         if (create) {
             insertTask({
+                // @ts-ignore
                 name: name,
                 description: emptyToNull(description),
                 details: emptyToNull(details),
             }).then((data) => {
                 if (data && data.length > 0) {
                     insertMachineTask({
+                        // @ts-ignore
                         machine: machine_id,
                         task: data[0].id
                     }).then(() => setStatus('closed'))

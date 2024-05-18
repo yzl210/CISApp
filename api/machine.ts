@@ -8,7 +8,7 @@ import {
 
 const machineColumns = "id,created_at,updated_at,name,brand,model,serial,location,description,image";
 const machineTaskColumns = "machine,task";
-const taskColumns = "id,created_at,created_by,name,description,details,done_at,done_by";
+const taskColumns = "id,created_at,created_by,name,description,details,completed_at,completed_by,template";
 const machineTagColumns = "machine,tag,created_at,created_by";
 const tagColumns = "id,created_at,created_by,name,color";
 
@@ -138,8 +138,9 @@ export interface Task {
     name: string;
     description?: string;
     details?: string;
-    done_at?: Date;
-    done_by?: string;
+    completed_at?: Date;
+    completed_by?: string;
+    template?: string;
 }
 
 

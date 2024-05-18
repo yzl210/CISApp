@@ -72,6 +72,7 @@ export default function MachineInfoEditDialog({machine, create, children}: Creat
 
         if (create) {
             insertMachine({
+                // @ts-ignore
                 name: name,
                 brand: emptyToNull(brand),
                 model: emptyToNull(model),

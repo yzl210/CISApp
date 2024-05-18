@@ -51,7 +51,7 @@ export default function TaskDetailsDialog({machine_id, task, children}: {
     }
 
     let creationDate = new Date(task.created_at)
-    let completionDate = task.done_at ? new Date(task.done_at) : null
+    let completionDate = task.completed_at ? new Date(task.completed_at) : null
 
 
     return <SimpleDialog open={status !== 'closed'} onOpenChange={openChange} trigger={children}>

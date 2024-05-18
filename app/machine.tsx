@@ -100,7 +100,7 @@ export default function MachinePage() {
                 </ScrollView>
             </Tabs.Content>
 
-            <Tabs.Content value={"tasks"} height={"95%"} borderWidth={1}>
+            <Tabs.Content value={"tasks"} height={"95%"}>
                 <TaskTab machine_id={id}/>
                 <TaskEditDialog machine_id={id} create>
                     <Button bordered bottom={"$3"} alignSelf={"center"} position={"absolute"} icon={Plus}/>
@@ -148,8 +148,8 @@ function TaskList({machine_id}: { machine_id: string }) {
     if (!tasks)
         return <Loading/>
 
-    let todoTasks = tasks.filter(task => !task.done_at);
-    let doneTasks = tasks.filter(task => task.done_at);
+    let todoTasks = tasks.filter(task => !task.completed_at);
+    let doneTasks = tasks.filter(task => task.completed_at);
 
     return <>
         <Card height={"50%"}>
@@ -199,8 +199,8 @@ function TaskTab({machine_id}: { machine_id: string }) {
     if (!tasks)
         return <Loading/>
 
-    let todoTasks = tasks.filter(task => !task.done_at);
-    let doneTasks = tasks.filter(task => task.done_at);
+    let todoTasks = tasks.filter(task => !task.completed_at);
+    let doneTasks = tasks.filter(task => task.completed_at);
 
 
     return <Tabs

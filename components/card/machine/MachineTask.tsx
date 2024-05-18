@@ -5,7 +5,7 @@ import {Task} from "../../../api/machine";
 
 export default function MachineTask({task}: { task: Task }) {
 
-    let icon = task.done_at ? <CheckCircle2 marginHorizontal={"$2"} color={"green"}/> :
+    let icon = task.completed_at ? <CheckCircle2 marginHorizontal={"$2"} color={"green"}/> :
         <AlertCircle marginHorizontal={"$2"} color={"red"}/>;
 
     return (

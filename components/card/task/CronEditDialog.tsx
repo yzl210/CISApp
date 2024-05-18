@@ -238,8 +238,11 @@ function WebTimeOfDaySelect({time, setTime}: { time: Date, setTime: (time: Date)
     return <input type={"time"}
                   value={(time.getHours() + "").padStart(2, '0') + ":" + (time.getMinutes() + "").padStart(2, '0')}
                   onChange={(e) => {
-                      if (e?.nativeEvent?.target?.value)
-                          change(e.nativeEvent.target.value)
+                      // @ts-ignore
+                      if (e?.nativeEvent?.target?.value) {
+                          // @ts-ignore
+                              change(e.nativeEvent.target.value)
+                          }
                   }}/>
 }
 
