@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, H2, Separator, Text, View, XStack} from "tamagui";
-import {Machine} from "../../../api/machine";
+import {Machine} from "../../api/machine";
 import {Edit3, QrCode} from "@tamagui/lucide-icons";
 import MachineInfoEditDialog from "./MachineInfoEditDialog";
-import {useRole} from "../../../api/API";
-import Loading from "../../Loading";
-import {canEditMachineInfo} from "../../../api/users";
+import {useRole} from "../../api/API";
+import Loading from "../Loading";
+import {canEditMachineInfo} from "../../api/users";
 import MachineQRCodeDialog from "./MachineQRCodeDialog";
 import {Dimensions, Image as RNImage} from "react-native";
 import {Image} from "expo-image";

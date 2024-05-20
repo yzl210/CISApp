@@ -1,10 +1,11 @@
 import {router} from "expo-router";
 import {Card, H3, H5, Separator, Spinner, Text, View, XStack} from "tamagui";
 import {Dot} from "@tamagui/lucide-icons";
-import {Machine, useTags, useTasks} from "../../../api/machine";
+import {Machine, useTags} from "../../api/machine";
 import {FlatList} from "react-native";
-import TagComponent from "../../TagComponent";
+import TagComponent from "../TagComponent";
 import {Image} from "expo-image";
+import {useTasks} from "../../api/tasks";
 
 
 export default function MachineOverview({machine}: { machine: Machine }) {

@@ -1,10 +1,10 @@
 import React from "react";
 import {Button, Card, XStack} from "tamagui";
-import {Machine, Tag} from "../../../api/machine";
-import TagComponent from "../../TagComponent";
-import {useRole} from "../../../api/API";
-import Loading from "../../Loading";
-import {canEditTags} from "../../../api/users";
+import {Machine, Tag} from "../../api/machine";
+import TagComponent from "../TagComponent";
+import {useRole} from "../../api/API";
+import Loading from "../Loading";
+import {canEditTags} from "../../api/users";
 import {Plus} from "@tamagui/lucide-icons";
 import AddTagPopover from "./AddTagPopover";
 import {TouchableOpacity} from "react-native";

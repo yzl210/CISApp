@@ -6,7 +6,7 @@ import {Machine, useAllMachines, useTags} from "../../api/machine";
 import Loading from "../../components/Loading";
 import TagComponent from "../../components/TagComponent";
 import {search} from "../../api/utils";
-import MachineInfoEditDialog from "../../components/card/machine/MachineInfoEditDialog";
+import MachineInfoEditDialog from "../../components/machine/MachineInfoEditDialog";
 import {Plus} from "@tamagui/lucide-icons";
 import {useRole} from "../../api/API";
 import {canCreateMachine} from "../../api/users";

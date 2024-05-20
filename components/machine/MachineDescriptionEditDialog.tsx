@@ -1,10 +1,10 @@
-import {Machine, useUpdateMachine} from "../../../api/machine";
+import {Machine, useUpdateMachine} from "../../api/machine";
 import {Dialog, XStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
-import Editor from "../../Editor";
-import {useIsWeb} from "../../../api/utils";
+import Editor from "../Editor";
+import {useIsWeb} from "../../api/utils";
 import SimpleDialog from "../SimpleDialog";
 
 export default function MachineDescriptionEditDialog({machine, children}: {

@@ -3,12 +3,12 @@ import React, {useState} from "react";
 import {CheckCircle, Timer, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
 import {LmInput} from "@tamagui-extras/form";
-import {useIsWeb} from "../../../api/utils";
+import {useIsWeb} from "../../api/utils";
 import SimpleDialog from "../SimpleDialog";
-import {Task, useInsertMachineTask, useInsertTask, useUpdateTask} from "../../../api/machine";
-import Editor from "../../Editor";
+import Editor from "../Editor";
 import CronEditDialog from "./CronEditDialog";
 import cronstrue from "cronstrue";
+import {Task, useInsertMachineTask, useInsertTask, useUpdateTask} from "../../api/tasks";
 
 type CreateTaskType = {
     machine_id: string;

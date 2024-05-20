@@ -1,6 +1,6 @@
 import SimpleDialog from "../SimpleDialog";
 import React, {useEffect, useMemo, useState} from "react";
-import {useIsWeb, WEEK_DAYS} from "../../../api/utils";
+import {useIsWeb, WEEK_DAYS} from "../../api/utils";
 import {Adapt, Button, Dialog, Input, Label, Select, Sheet, Text, XGroup, XStack, YStack} from "tamagui";
 import {LmButton} from "@tamagui-extras/core";
 import {Check, CheckCircle, ChevronDown, XCircle} from "@tamagui/lucide-icons";

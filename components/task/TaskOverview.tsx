@@ -1,9 +1,10 @@
 import React from "react";
 import {Card, Separator, Text, XStack} from "tamagui";
 import {AlertCircle, CheckCircle2} from "@tamagui/lucide-icons";
-import {Task} from "../../../api/machine";
 
-export default function MachineTask({task}: { task: Task }) {
+import {Task} from "../../api/tasks";
+
+export default function TaskOverview({task}: { task: Task }) {
 
     let icon = task.completed_at ? <CheckCircle2 marginHorizontal={"$2"} color={"green"}/> :
         <AlertCircle marginHorizontal={"$2"} color={"red"}/>;

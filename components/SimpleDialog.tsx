@@ -1,4 +1,4 @@
-import {Dialog, Sheet} from "tamagui";
+import {Dialog, DialogContentProps, Sheet} from "tamagui";
 import React from "react";
 
 type SimpleDialog = {
@@ -6,11 +6,12 @@ type SimpleDialog = {
     onOpenChange: (open: boolean) => void
     trigger: React.ReactNode,
     children?: React.ReactNode[]
+    props?: DialogContentProps
 }
 
 let i = 0;
 
-export default function SimpleDialog({open, onOpenChange, trigger, children}: SimpleDialog) {
+export default function SimpleDialog({open, onOpenChange, trigger, children, props}: SimpleDialog) {
     return <Dialog modal open={open} onOpenChange={onOpenChange}>
         <Dialog.Adapt when="sm" platform="touch">
             <Dialog.Sheet animation="medium" zIndex={200000 + i++} modal disableDrag>
@@ -47,7 +48,8 @@ export default function SimpleDialog({open, onOpenChange, trigger, children}: Si
                                 },
                             ]}
                             enterStyle={{x: 0, y: -20, opacity: 0, scale: 0.9}}
-                            exitStyle={{x: 0, y: 10, opacity: 0, scale: 0.95}}>
+                            exitStyle={{x: 0, y: 10, opacity: 0, scale: 0.95}}
+                            {...props}>
                 {children}
             </Dialog.Content>
         </Dialog.Portal>
