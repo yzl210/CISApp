@@ -1,21 +1,33 @@
 import {Redirect, Stack, useLocalSearchParams} from "expo-router";
-import MachineInfo from "../components/card/machine/MachineInfo";
-import MachineTask from "../components/card/machine/MachineTask";
+import MachineInfo from "../components/machine/MachineInfo";
+import TaskOverview from "../components/task/TaskOverview";
 import {Button, Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
-import {Info, LayoutList, ListChecks, ListTodo, Plus, ScrollText} from "@tamagui/lucide-icons";
-import {getMachineTags, getTags, Machine, Task, useMachine, useTasks} from "../api/machine";
+import {
+    CircleEllipsis,
+    Info,
+    LayoutList,
+    ListChecks,
+    ListTodo,
+    Plus,
+    ScrollText,
+    ShieldEllipsis
+} from "@tamagui/lucide-icons";
+import {getMachineTags, getTags, Machine, useMachine} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {useIsLandscape} from "../api/utils";
 import React from "react";
 import {FlatList, Pressable} from "react-native";
 import {Log, useRole} from "../api/API";
-import MaintenanceLog from "../components/card/MaintenanceLog";
-import MachineTags from "../components/card/tag/MachineTags";
+import MaintenanceLog from "../components/MaintenanceLog";
+import MachineTags from "../components/tag/MachineTags";
 import {canEditTags} from "../api/users";
-import MachineDescription from "../components/card/machine/MachineDescription";
-import TaskDetailsDialog from "../components/card/task/TaskDetailsDialog";
-import TaskEditDialog from "../components/card/task/TaskEditDialog";
+import MachineDescription from "../components/machine/MachineDescription";
+import TaskDetailsDialog from "../components/task/TaskDetailsDialog";
+import NewTaskPopover from "../components/task/NewTaskPopover";
+import TaskEditDialog from "../components/task/TaskEditDialog";
+import TaskTemplatesDialog from "../components/task/TaskTemplatesDialog";
+import {Task, useTasks} from "../api/tasks";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -100,11 +112,11 @@ export default function MachinePage() {
                 </ScrollView>
             </Tabs.Content>
 
-            <Tabs.Content value={"tasks"} height={"95%"} borderWidth={1}>
+            <Tabs.Content value={"tasks"} height={"95%"}>
                 <TaskTab machine_id={id}/>
-                <TaskEditDialog machine_id={id} create>
+                <NewTaskPopover machine_id={id}>
                     <Button bordered bottom={"$3"} alignSelf={"center"} position={"absolute"} icon={Plus}/>
-                </TaskEditDialog>
+                </NewTaskPopover>
             </Tabs.Content>
             <Tabs.Content value={"logs"}>
                 <LogsTab machine_id={id}/>
@@ -148,8 +160,8 @@ function TaskList({machine_id}: { machine_id: string }) {
     if (!tasks)
         return <Loading/>
 
-    let todoTasks = tasks.filter(task => !task.done_at);
-    let doneTasks = tasks.filter(task => task.done_at);
+    let todoTasks = tasks.filter(task => !task.completed_at);
+    let doneTasks = tasks.filter(task => task.completed_at);
 
     return <>
         <Card height={"50%"}>
@@ -159,9 +171,14 @@ function TaskList({machine_id}: { machine_id: string }) {
                         <LayoutList/>
                         <H2>To Do</H2>
                     </XStack>
-                    <TaskEditDialog machine_id={machine_id} create>
-                        <Button bordered icon={Plus}/>
-                    </TaskEditDialog>
+                    <XStack gap={"$3"}>
+                        <TaskTemplatesDialog machine_id={machine_id}>
+                            <Button bordered icon={CircleEllipsis}/>
+                        </TaskTemplatesDialog>
+                        <TaskEditDialog machine_id={machine_id} create>
+                            <Button bordered icon={Plus}/>
+                        </TaskEditDialog>
+                    </XStack>
                 </XStack>
             </Card.Header>
             <Separator/>
@@ -199,8 +216,8 @@ function TaskTab({machine_id}: { machine_id: string }) {
     if (!tasks)
         return <Loading/>
 
-    let todoTasks = tasks.filter(task => !task.done_at);
-    let doneTasks = tasks.filter(task => task.done_at);
+    let todoTasks = tasks.filter(task => !task.completed_at);
+    let doneTasks = tasks.filter(task => task.completed_at);
 
 
     return <Tabs
@@ -240,7 +257,7 @@ function TaskTab({machine_id}: { machine_id: string }) {
 function MachineTaskWithDialog({machine_id, task}: { machine_id: string, task: Task }) {
     return <TaskDetailsDialog key={task.id} task={task} machine_id={machine_id}>
         <Pressable>
-            <MachineTask task={task}/>
+            <TaskOverview task={task}/>
         </Pressable>
     </TaskDetailsDialog>
 

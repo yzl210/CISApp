@@ -1,9 +1,9 @@
-import {Machine} from "../../../api/machine";
+import {Machine} from "../../api/machine";
 import {Dialog, View, XStack} from "tamagui";
 import React, {useRef, useState} from "react";
 import {Save, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
-import {useIsWeb} from "../../../api/utils";
+import {useIsWeb} from "../../api/utils";
 import SimpleDialog from "../SimpleDialog";
 import QRCode from "react-native-qrcode-svg";
 import ViewShot, {captureRef} from "react-native-view-shot";

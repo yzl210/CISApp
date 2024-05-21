@@ -1,6 +1,6 @@
-import MachineOverview from "../../components/card/machine/MachineOverview";
+import MachineOverview from "../../components/machine/MachineOverview";
 import React from "react";
-import {SizableText, Tabs} from "tamagui";
+import {ScrollView, SizableText, Tabs} from "tamagui";
 import {AlertTriangle, Pin} from "@tamagui/lucide-icons";
 import {getMaintenanceNeeded, getPins, Machine} from "../../api/machine";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
@@ -20,7 +20,7 @@ export default function HomeScreen() {
             defaultValue={"pinned"}
             orientation={"horizontal"}
             flexDirection={"column"}
-            height={"94%"}
+            height={"95%"}
         >
             <Tabs.List>
                 <Tabs.Tab flex={1} value={"pinned"} bordered={false}>
@@ -32,7 +32,6 @@ export default function HomeScreen() {
                     <SizableText>Maintenance Needed</SizableText>
                 </Tabs.Tab>
             </Tabs.List>
-
             <MachineCategory value={"pinned"} machines={pins}/>
             <MachineCategory value={"maintenance-needed"} machines={maintenanceNeeded}/>
 
@@ -41,9 +40,11 @@ export default function HomeScreen() {
 }
 
 function MachineCategory({value, machines}: { value: string, machines: Machine[] }) {
-    return <Tabs.Content height={"100%"} value={value} alignItems={"center"}>
-        <LmGrid row flexWrap={"wrap"} gap={"$3"} justifyContent={"center"}>
-            {machines.map(machine => <LmGrid key={machine.id}><MachineOverview machine={machine}/></LmGrid>)}
-        </LmGrid>
+    return <Tabs.Content marginTop={"$3"} height={"100%"} value={value} alignItems={"center"}>
+        <ScrollView>
+            <LmGrid row flexWrap={"wrap"} gap={"$3"} justifyContent={"center"}>
+                {machines.map(machine => <LmGrid key={machine.id}><MachineOverview machine={machine}/></LmGrid>)}
+            </LmGrid>
+        </ScrollView>
     </Tabs.Content>
 }

@@ -1,15 +1,25 @@
-import React from "react";
-import {Button, Card, H2, Image, Separator, Text, View, XStack} from "tamagui";
-import {Machine} from "../../../api/machine";
+import React, {useEffect, useState} from "react";
+import {Button, Card, H2, Separator, Text, View, XStack} from "tamagui";
+import {Machine} from "../../api/machine";
 import {Edit3, QrCode} from "@tamagui/lucide-icons";
 import MachineInfoEditDialog from "./MachineInfoEditDialog";
-import {useRole} from "../../../api/API";
-import Loading from "../../Loading";
-import {canEditMachineInfo} from "../../../api/users";
+import {useRole} from "../../api/API";
+import Loading from "../Loading";
+import {canEditMachineInfo} from "../../api/users";
 import MachineQRCodeDialog from "./MachineQRCodeDialog";
+import {Dimensions, Image as RNImage} from "react-native";
+import {Image} from "expo-image";
 
 export default function MachineInfo({machine}: { machine: Machine }) {
     const {role} = useRole();
+    const [ratio, setRatio] = useState(1)
+
+    useEffect(() => {
+        if (machine.image)
+            RNImage.getSize(machine.image, (width, height) => {
+                setRatio(width / height)
+            });
+    }, [machine.image]);
 
     if (!role) {
         return <Loading/>;
@@ -19,8 +29,9 @@ export default function MachineInfo({machine}: { machine: Machine }) {
     let desc: React.ReactNode[] = []
     let addDesc = (s: string | undefined) => {
         if (s)
-            desc.push(<Text key={desc.length} color={"gray"}>{s}</Text>, <Separator key={desc.length + 1} vertical
-                                                                                    marginHorizontal={"$2"}/>);
+            desc.push(<Text key={desc.length} textAlign={"center"} color={"gray"}>{s}</Text>, <Separator
+                key={desc.length + 1} vertical
+                marginHorizontal={"$2"}/>);
     }
 
     addDesc(machine.brand)
@@ -29,6 +40,7 @@ export default function MachineInfo({machine}: { machine: Machine }) {
     addDesc(machine.location)
 
     desc = desc.slice(0, -1)
+
 
     return <>
         <Card elevate bordered>
@@ -45,8 +57,9 @@ export default function MachineInfo({machine}: { machine: Machine }) {
                 </MachineInfoEditDialog> : null}
             </Card.Header>
             <Separator marginBottom={"$2.5"}/>
-            <View alignSelf={"center"}>
-                <Image source={{uri: machine.image, width: 300, height: 300}}/>
+            <View alignSelf={"center"} marginBottom={"$2"}>
+                <Image source={machine.image}
+                       style={{width: Dimensions.get('window').width * 0.28, aspectRatio: ratio}}/>
             </View>
         </Card>
     </>;

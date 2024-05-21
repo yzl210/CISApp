@@ -1,10 +1,10 @@
-import {Machine, useDeleteMachine, useInsertMachine, useUpdateMachine} from "../../../api/machine";
+import {Machine, useDeleteMachine, useInsertMachine, useUpdateMachine} from "../../api/machine";
 import {Dialog, Text, XStack, YStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, Trash, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
 import {LmInput} from "@tamagui-extras/form";
-import {useIsWeb} from "../../../api/utils";
+import {useIsWeb} from "../../api/utils";
 import SimpleDialog from "../SimpleDialog";
 import {DeleteConfirmDialog} from "../ConfirmDialog";
 import {router} from "expo-router";
@@ -72,6 +72,7 @@ export default function MachineInfoEditDialog({machine, create, children}: Creat
 
         if (create) {
             insertMachine({
+                // @ts-ignore
                 name: name,
                 brand: emptyToNull(brand),
                 model: emptyToNull(model),

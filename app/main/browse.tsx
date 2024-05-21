@@ -1,15 +1,16 @@
 import {FlatList, Pressable} from "react-native";
 import React, {useState} from "react";
-import {Button, Image, Input, Separator, Text, View, XStack} from "tamagui";
+import {Button, Input, Separator, Text, View, XStack} from "tamagui";
 import {router} from "expo-router";
 import {Machine, useAllMachines, useTags} from "../../api/machine";
 import Loading from "../../components/Loading";
 import TagComponent from "../../components/TagComponent";
 import {search} from "../../api/utils";
-import MachineInfoEditDialog from "../../components/card/machine/MachineInfoEditDialog";
+import MachineInfoEditDialog from "../../components/machine/MachineInfoEditDialog";
 import {Plus} from "@tamagui/lucide-icons";
 import {useRole} from "../../api/API";
 import {canCreateMachine} from "../../api/users";
+import {Image} from "expo-image";
 
 export default function Browse() {
     const [query, setQuery] = useState('');
@@ -22,21 +23,19 @@ export default function Browse() {
 
     return (
         <View height={"100%"} backgroundColor={"white"}>
-            <XStack>
+            <XStack marginBottom={"$2"}>
                 {canCreateMachine(role) ?
                     <MachineInfoEditDialog create={true}>
-                        <Button theme={"green"} borderTopRightRadius={0} borderBottomRightRadius={0} icon={Plus}/>
+                        <Button theme={"green"} borderRadius={0} icon={Plus}/>
                     </MachineInfoEditDialog> : null}
                 <Input
-                    borderTopLeftRadius={0}
-                    borderBottomLeftRadius={0}
+                    borderRadius={0}
                     width={"100%"}
                     placeholder={"Search..."}
                     value={query}
                     onChangeText={setQuery}
                 />
             </XStack>
-            <Separator marginVertical={"$1"}/>
             {machines ? <MachineList query={query}
                                      machines={machines}/> :
                 <Loading/>}
@@ -45,7 +44,6 @@ export default function Browse() {
 }
 
 function MachineList({query, machines}: { query: string, machines: Machine[] }) {
-
     if (machines.length < 1) {
         return <Text color={"gray"} alignSelf={"center"} marginVertical={"$2"}>No result</Text>;
     }
@@ -67,7 +65,7 @@ function MachineEntry({machine}: { machine: Machine }) {
     return <Pressable onPress={openMachine}>
         <View key={machine.id}>
             <XStack marginHorizontal={"$2"} alignItems={"center"} gap={"$2"} flexWrap={"wrap"}>
-                <Image source={{uri: machine.image, width: 50, height: 50}}/>
+                <Image source={machine.image} style={{width: 50, height: 50}} contentFit={"contain"}/>
                 <Separator backgroundColor={"darkgray"} vertical/>
                 <Text fontSize={20}>{machine.name}</Text>
                 <Separator backgroundColor={"darkgray"} vertical/>
@@ -76,16 +74,4 @@ function MachineEntry({machine}: { machine: Machine }) {
             <Separator backgroundColor={"darkgray"} marginVertical={"$2"}/>
         </View>
     </Pressable>
-}
-
-function Section({text}: { text: string | undefined }) {
-
-    if (!text) {
-        return null;
-    }
-
-    return <>
-        <Separator backgroundColor={"darkgray"} marginHorizontal={"$2"} vertical/>
-        <Text alignSelf={"center"} fontSize={16} color={"gray"}>{text}</Text>
-    </>
 }

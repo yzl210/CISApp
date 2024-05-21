@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Button, H2, View} from "tamagui";
-import {BarcodeScanningResult, Camera, CameraView} from "expo-camera/next";
+import {BarcodeScanningResult, Camera, CameraView} from "expo-camera";
 import {router} from "expo-router";
 import Loading from "../../components/Loading";
 import {StyleSheet} from "react-native";

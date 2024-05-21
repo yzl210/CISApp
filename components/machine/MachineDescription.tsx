@@ -1,10 +1,10 @@
 import React from "react";
 import {Button, Card, View} from "tamagui";
-import {Machine} from "../../../api/machine";
+import {Machine} from "../../api/machine";
 import {Edit3} from "@tamagui/lucide-icons";
-import {useRole} from "../../../api/API";
-import Loading from "../../Loading";
-import {canEditMachineInfo} from "../../../api/users";
+import {useRole} from "../../api/API";
+import Loading from "../Loading";
+import {canEditMachineInfo} from "../../api/users";
 import MachineDescriptionEditDialog from "./MachineDescriptionEditDialog";
 import RenderHTML from "react-native-render-html";
 import {useWindowDimensions} from "react-native";

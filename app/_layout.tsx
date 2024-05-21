@@ -29,6 +29,7 @@ export default function Layout() {
                     }}/>
                     <Stack.Screen name="main" options={{
                         title: "CIS App",
+                        headerShown: false
                     }}/>
                     <Stack.Screen name="login" options={{
                         title: "Login",

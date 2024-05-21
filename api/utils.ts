@@ -1,5 +1,7 @@
 import {Platform, useWindowDimensions} from "react-native"
 
+export const WEEK_DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+
 export function useIsLandscape() {
     const {height, width} = useWindowDimensions()
     return width > height
