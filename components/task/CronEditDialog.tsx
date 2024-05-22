@@ -44,7 +44,6 @@ export default function CronEditDialog(props: CronEditDialogProps) {
         if (repeatType === 'month' && interval > 1) {
             monthPart += "/" + interval;
         }
-
         setCron(`${minute} ${hour} ${dayOfMonthPart} ${monthPart} ${dayOfWeekPart}`)
     }, [minute, hour, interval, repeatType, daysOfWeek, daysOfMonth])
 
@@ -141,7 +140,6 @@ export default function CronEditDialog(props: CronEditDialogProps) {
             Task Repetition
         </Dialog.Title>
         <Dialog.Description>
-
         </Dialog.Description>
         <YStack gap={"$2"}>
             <XStack gap={"$2"}>

@@ -46,8 +46,8 @@ function MobileEditor({onContentChange, initialContent, width, height}: EditorPr
 function WebEditor({initialContent, onContentChange, width, height}: EditorProps) {
     const dimensions = useWindowDimensions();
 
-    if (!width) width = dimensions.width * 0.6;
-    if (!height) height = dimensions.height * 0.5;
+    if (!width) width = dimensions.width * 0.4;
+    if (!height) height = dimensions.height * 0.4;
 
     const iFrame = useRef<HTMLIFrameElement>(null);
 

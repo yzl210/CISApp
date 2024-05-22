@@ -8,7 +8,13 @@ import SimpleDialog from "../SimpleDialog";
 import Editor from "../Editor";
 import CronEditDialog from "./CronEditDialog";
 import cronstrue from "cronstrue";
-import {TaskTemplate, useDeleteTaskTemplate, useInsertTaskTemplate, useUpdateTaskTemplate} from "../../api/tasks";
+import {
+    convertCronTimezone,
+    TaskTemplate,
+    useDeleteTaskTemplate,
+    useInsertTaskTemplate,
+    useUpdateTaskTemplate
+} from "../../api/tasks";
 
 type CreateTaskTemplateType = {
     machine_id: string;
@@ -38,7 +44,7 @@ export default function TaskTemplateEditDialog({
     const [status, setStatus] = useState<'editing' | 'loading' | 'deleting' | 'closed'>('closed')
     const [name, setName] = useState(create ? "New Task Template" : template.name)
     const [description, setDescription] = useState(create ? "" : template.description ?? "")
-    const [cron, setCron] = useState(create ? "" : template.cron ?? "")
+    const [cron, setCron] = useState(create ? "" : (template.cron ? convertCronTimezone(template.cron, "local") : ""))
     const [details, setDetails] = useState(create ? "" : template.details ?? "")
     const isWeb = useIsWeb();
 
@@ -79,7 +85,7 @@ export default function TaskTemplateEditDialog({
                 machine: machine_id,
                 description: emptyToNull(description),
                 details: emptyToNull(details),
-                cron: emptyToNull(cron)
+                cron: cron && cron.length > 0 ? convertCronTimezone(cron, "remote") : undefined
             }).then((data) => {
                 setStatus('closed')
             }).catch(e => {
@@ -93,7 +99,7 @@ export default function TaskTemplateEditDialog({
                 id: template.id,
                 description: emptyToNull(description),
                 details: emptyToNull(details),
-                cron: emptyToNull(cron)
+                cron: cron && cron.length > 0 ? convertCronTimezone(cron, "remote") : undefined
             }).then(() => {
                 setStatus('closed')
             }).catch(e => {

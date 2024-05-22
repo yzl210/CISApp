@@ -1,4 +1,4 @@
-import {TaskTemplate, useInsertMachineTask, useInsertTask} from "../../api/tasks";
+import {convertCronTimezone, TaskTemplate, useInsertMachineTask, useInsertTask} from "../../api/tasks";
 import {Button, Card, H4, Separator, Text, XStack} from "tamagui";
 import React from "react";
 import {Edit3, Plus} from "@tamagui/lucide-icons";
@@ -49,7 +49,8 @@ export default function TaskTemplateOverview({template}: { template: TaskTemplat
                 {template.description ?
                     <Text alignSelf={"flex-start"} numberOfLines={3}>{template.description}</Text> : null}
                 {template.cron ? <Separator marginVertical={"$3"}/> : null}
-                {template.cron ? <Text>Repeats: {cronstrue.toString(template.cron, {verbose: true})}</Text> : null}
+                {template.cron ?
+                    <Text>Repeats: {cronstrue.toString(convertCronTimezone(template.cron, "local"), {verbose: true})}</Text> : null}
             </Card.Header>
             <Card.Footer>
 

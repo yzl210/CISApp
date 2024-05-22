@@ -5,6 +5,8 @@ import {
     useQuery,
     useUpdateMutation
 } from "@supabase-cache-helpers/postgrest-react-query";
+import {convert} from "./crontzconvert";
+import moment from "moment-timezone";
 
 const machineTaskColumns = "machine,task";
 const taskColumns = "id,created_at,created_by,name,description,details,completed_at,completed_by,template";
@@ -86,6 +88,10 @@ export function useDeleteTaskTemplate() {
     return useDeleteMutation(supabase.from('task_templates'), ['id'], taskTemplateColumns);
 }
 
+export function convertCronTimezone(cron: string, to: "remote" | "local") {
+    let converted = convert(cron, to === "local" ? "UTC" : moment.tz.guess(), to === "remote" ? "UTC" : moment.tz.guess());
+    return converted.slice(converted.indexOf(" ") + 1);
+}
 
 export interface Task {
     id: string;
