@@ -49,6 +49,9 @@ export default function SimpleDialog({open, onOpenChange, trigger, children, pro
                             ]}
                             enterStyle={{x: 0, y: -20, opacity: 0, scale: 0.9}}
                             exitStyle={{x: 0, y: 10, opacity: 0, scale: 0.95}}
+                            maxHeight={"80%"}
+                            minWidth={"20%"}
+                            maxWidth={"80%"}
                             {...props}>
                 {children}
             </Dialog.Content>

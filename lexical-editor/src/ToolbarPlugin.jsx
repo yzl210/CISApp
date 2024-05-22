@@ -5,11 +5,16 @@ import {
     $getNodeByKey,
     $getSelection,
     $isRangeSelection,
+    CAN_REDO_COMMAND,
+    CAN_UNDO_COMMAND,
+    FORMAT_ELEMENT_COMMAND,
     FORMAT_TEXT_COMMAND,
-    SELECTION_CHANGE_COMMAND
+    REDO_COMMAND,
+    SELECTION_CHANGE_COMMAND,
+    UNDO_COMMAND
 } from "lexical";
 import {$isLinkNode, TOGGLE_LINK_COMMAND} from "@lexical/link";
-import {$isAtNodeEnd, $wrapNodes} from "@lexical/selection";
+import {$isAtNodeEnd, $isParentElementRTL, $wrapNodes} from "@lexical/selection";
 import {$getNearestNodeOfType, mergeRegister} from "@lexical/utils";
 import {
     $isListNode,
@@ -400,12 +405,15 @@ function BlockOptionsDropdownList({
 export default function ToolbarPlugin() {
     const [editor] = useLexicalComposerContext();
     const toolbarRef = useRef(null);
+    const [canUndo, setCanUndo] = useState(false);
+    const [canRedo, setCanRedo] = useState(false);
     const [blockType, setBlockType] = useState("paragraph");
     const [selectedElementKey, setSelectedElementKey] = useState(null);
     const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] = useState(
         false
     );
     const [codeLanguage, setCodeLanguage] = useState("");
+    const [isRTL, setIsRTL] = useState(false);
     const [isLink, setIsLink] = useState(false);
     const [isBold, setIsBold] = useState(false);
     const [isItalic, setIsItalic] = useState(false);
@@ -445,6 +453,7 @@ export default function ToolbarPlugin() {
             setIsUnderline(selection.hasFormat("underline"));
             setIsStrikethrough(selection.hasFormat("strikethrough"));
             setIsCode(selection.hasFormat("code"));
+            setIsRTL($isParentElementRTL(selection));
 
             // Update links
             const node = getSelectedNode(selection);
@@ -468,6 +477,22 @@ export default function ToolbarPlugin() {
                 SELECTION_CHANGE_COMMAND,
                 (_payload, newEditor) => {
                     updateToolbar();
+                    return false;
+                },
+                LowPriority
+            ),
+            editor.registerCommand(
+                CAN_UNDO_COMMAND,
+                (payload) => {
+                    setCanUndo(payload);
+                    return false;
+                },
+                LowPriority
+            ),
+            editor.registerCommand(
+                CAN_REDO_COMMAND,
+                (payload) => {
+                    setCanRedo(payload);
                     return false;
                 },
                 LowPriority
@@ -500,6 +525,27 @@ export default function ToolbarPlugin() {
 
     return (
         <div className="toolbar" ref={toolbarRef}>
+            <button
+                disabled={!canUndo}
+                onClick={() => {
+                    editor.dispatchCommand(UNDO_COMMAND);
+                }}
+                className="toolbar-item spaced"
+                aria-label="Undo"
+            >
+                <i className="format undo"/>
+            </button>
+            <button
+                disabled={!canRedo}
+                onClick={() => {
+                    editor.dispatchCommand(REDO_COMMAND);
+                }}
+                className="toolbar-item"
+                aria-label="Redo"
+            >
+                <i className="format redo"/>
+            </button>
+            <Divider/>
             {supportedBlockTypes.has(blockType) && (
                 <>
                     <button
@@ -594,6 +640,44 @@ export default function ToolbarPlugin() {
                     </button>
                     {isLink &&
                         createPortal(<FloatingLinkEditor editor={editor}/>, document.body)}
+                    <Divider/>
+                    <button
+                        onClick={() => {
+                            editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
+                        }}
+                        className="toolbar-item spaced"
+                        aria-label="Left Align"
+                    >
+                        <i className="format left-align"/>
+                    </button>
+                    <button
+                        onClick={() => {
+                            editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
+                        }}
+                        className="toolbar-item spaced"
+                        aria-label="Center Align"
+                    >
+                        <i className="format center-align"/>
+                    </button>
+                    <button
+                        onClick={() => {
+                            editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
+                        }}
+                        className="toolbar-item spaced"
+                        aria-label="Right Align"
+                    >
+                        <i className="format right-align"/>
+                    </button>
+                    <button
+                        onClick={() => {
+                            editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
+                        }}
+                        className="toolbar-item"
+                        aria-label="Justify Align"
+                    >
+                        <i className="format justify-align"/>
+                    </button>
+                    {" "}
                 </>
             )}
         </div>

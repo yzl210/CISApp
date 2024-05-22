@@ -74,6 +74,19 @@ export function useTaskTemplates(machine_id: string) {
     return {taskTemplates, taskTemplatesStatus, taskTemplatesError};
 }
 
+export function useInsertTaskTemplate() {
+    return useInsertMutation(supabase.from('task_templates'), ['id'], taskTemplateColumns);
+}
+
+export function useUpdateTaskTemplate() {
+    return useUpdateMutation(supabase.from('task_templates'), ['id'], taskTemplateColumns);
+}
+
+export function useDeleteTaskTemplate() {
+    return useDeleteMutation(supabase.from('task_templates'), ['id'], taskTemplateColumns);
+}
+
+
 export interface Task {
     id: string;
     created_at: Date;

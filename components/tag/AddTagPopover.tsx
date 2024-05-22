@@ -1,11 +1,11 @@
-import {Input, Popover, Separator, Spinner, Text, XStack, YStack} from "tamagui";
+import {Input, Separator, Spinner, Text, XStack, YStack} from "tamagui";
 import {Machine, Tag, useAllTags, useInsertMachineTags} from "../../api/machine";
 import React, {useState} from "react";
 import Loading from "../Loading";
 import {TouchableTagComponent} from "../TagComponent";
 import {search} from "../../api/utils";
-import {FlashList} from "@shopify/flash-list";
 import SimplePopover from "../SimplePopover";
+import {FlatList} from "react-native";
 
 export default function AddTagPopover({machine, tags: currentTags, children}: {
     machine: Machine,
@@ -45,13 +45,12 @@ export default function AddTagPopover({machine, tags: currentTags, children}: {
                 {loading ? <Spinner/> : null}
             </XStack>
             <Input value={filter} onChangeText={setFilter} height={"$2"} placeholder={"Search Tag"} borderRadius={5}/>
-            <FlashList data={filteredTags}
-                       renderItem={item => <>
-                           <TouchableTagComponent tag={item.item} onPress={select}/>
-                           <Separator marginVertical={"$1"}/>
-                       </>}
-                       keyExtractor={item => item.id}
-                       estimatedItemSize={10}
+            <FlatList data={filteredTags}
+                      renderItem={item => <>
+                          <TouchableTagComponent tag={item.item} onPress={select}/>
+                          <Separator marginVertical={"$1"}/>
+                      </>}
+                      keyExtractor={item => item.id}
             />
         </YStack>
     </SimplePopover>

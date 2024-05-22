@@ -56,7 +56,7 @@ export default function TaskDetailsDialog({machine_id, task, children}: {
 
 
     return <SimpleDialog open={status !== 'closed'} onOpenChange={openChange} trigger={children}>
-        <Dialog.Title>
+        <Dialog.Title marginRight={"$6"}>
             {task.name}
         </Dialog.Title>
         <Dialog.Description>

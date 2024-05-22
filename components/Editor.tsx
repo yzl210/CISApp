@@ -2,6 +2,7 @@ import {useIsWeb} from "../api/utils";
 import htmlString from "lexical-editor/dist/htmlString";
 import {useEffect, useRef} from "react";
 import WebView, {WebViewMessageEvent} from "react-native-webview";
+import {useWindowDimensions} from "react-native";
 
 type EditorProps = {
     initialContent?: string;
@@ -15,13 +16,8 @@ export default function Editor(props: EditorProps) {
     return isWeb ? <WebEditor {...props}/> : <MobileEditor {...props} />;
 }
 
-function MobileEditor({onContentChange, initialContent, width = 400, height = 400}: EditorProps) {
+function MobileEditor({onContentChange, initialContent, width, height}: EditorProps) {
     const webView = useRef<WebView>(null);
-
-    useEffect(() => {
-        if (webView.current) {
-        }
-    }, []);
 
     let onMessage = (event: WebViewMessageEvent) => {
         const message = JSON.parse(event.nativeEvent.data);
@@ -47,7 +43,12 @@ function MobileEditor({onContentChange, initialContent, width = 400, height = 40
     />
 }
 
-function WebEditor({initialContent, onContentChange, width = 600, height = 400}: EditorProps) {
+function WebEditor({initialContent, onContentChange, width, height}: EditorProps) {
+    const dimensions = useWindowDimensions();
+
+    if (!width) width = dimensions.width * 0.6;
+    if (!height) height = dimensions.height * 0.5;
+
     const iFrame = useRef<HTMLIFrameElement>(null);
 
     useEffect(() => {

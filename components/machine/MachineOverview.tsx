@@ -21,13 +21,15 @@ export default function MachineOverview({machine}: { machine: Machine }) {
         <Card elevate bordered onPress={openMachine} hoverStyle={{scale: 0.975}} pressStyle={{scale: 0.95}}
               animation={"quick"}>
             <Card.Header padded>
-                <XStack>
+                <XStack alignSelf={machine.image ? undefined : "center"}>
                     <View alignSelf={"center"} maxWidth={"$19"}>
                         <H3 alignSelf={"center"}>{machine.name}</H3>
                         {machine.model ? <H5 color={"grey"} alignSelf={"center"}>{machine.model}</H5> : null}
                     </View>
-                    <Separator vertical marginHorizontal={"$3"}/>
-                    <Image source={machine.image} style={{width: 100, height: 100}} contentFit={"contain"}/>
+                    {machine.image ? <>
+                        <Separator vertical marginHorizontal={"$3"}/>
+                        <Image source={machine.image} style={{width: 100, height: 100}} contentFit={"contain"}/>
+                    </> : null}
                 </XStack>
                 {tags && tags.length > 0 ? <Separator marginVertical={"$2"}/> : null}
                 {tags ? <XStack gap={"$2"} flexWrap={"wrap"}>

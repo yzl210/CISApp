@@ -1,4 +1,4 @@
-import {Button, Popover, Text, XStack, YStack} from "tamagui";
+import {Button, Text, XStack, YStack} from "tamagui";
 import {Machine, Tag, useDeleteMachineTag, useMachineTag} from "../../api/machine";
 import React, {useState} from "react";
 import Loading from "../Loading";

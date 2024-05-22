@@ -1,33 +1,24 @@
 import {Redirect, Stack, useLocalSearchParams} from "expo-router";
 import MachineInfo from "../components/machine/MachineInfo";
 import TaskOverview from "../components/task/TaskOverview";
-import {Button, Card, H2, ScrollView, Separator, SizableText, Tabs, View, XStack, YStack} from "tamagui";
-import {
-    CircleEllipsis,
-    Info,
-    LayoutList,
-    ListChecks,
-    ListTodo,
-    Plus,
-    ScrollText,
-    ShieldEllipsis
-} from "@tamagui/lucide-icons";
+import {Accordion, Button, H2, ScrollView, Separator, SizableText, Square, Tabs, View, XStack, YStack} from "tamagui";
+import {ChevronDown, Info, LayoutList, List, ListChecks, ListTodo, Plus, ScrollText} from "@tamagui/lucide-icons";
 import {getMachineTags, getTags, Machine, useMachine} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
 import {useIsLandscape} from "../api/utils";
 import React from "react";
-import {FlatList, Pressable} from "react-native";
+import {Dimensions, FlatList, Pressable} from "react-native";
 import {Log, useRole} from "../api/API";
 import MaintenanceLog from "../components/MaintenanceLog";
 import MachineTags from "../components/tag/MachineTags";
-import {canEditTags} from "../api/users";
+import {canEditTags, canEditTasks} from "../api/users";
 import MachineDescription from "../components/machine/MachineDescription";
 import TaskDetailsDialog from "../components/task/TaskDetailsDialog";
-import NewTaskPopover from "../components/task/NewTaskPopover";
 import TaskEditDialog from "../components/task/TaskEditDialog";
 import TaskTemplatesDialog from "../components/task/TaskTemplatesDialog";
 import {Task, useTasks} from "../api/tasks";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -38,13 +29,15 @@ export default function MachinePage() {
 
     const {machine, machineError} = useMachine(id);
     const isLandscape = useIsLandscape();
+    const {bottom, left, right} = useSafeAreaInsets();
+    const {role: role} = useRole();
 
     if (machineError) {
         alert(machineError.message);
         return null;
     }
 
-    if (!machine) {
+    if (!machine || !role) {
         return <LoadingScreen/>
     }
 
@@ -114,14 +107,18 @@ export default function MachinePage() {
 
             <Tabs.Content value={"tasks"} height={"95%"}>
                 <TaskTab machine_id={id}/>
-                <NewTaskPopover machine_id={id}>
-                    <Button bordered bottom={"$3"} alignSelf={"center"} position={"absolute"} icon={Plus}/>
-                </NewTaskPopover>
+                {canEditTasks(role) ? <>
+                    <TaskTemplatesDialog machine_id={machine.id}>
+                        <Button bordered left={left + 10} bottom={bottom + 10} position={"absolute"} icon={List}/>
+                    </TaskTemplatesDialog>
+                    <TaskEditDialog machine_id={machine.id} create>
+                        <Button bordered right={right + 10} bottom={bottom + 10} position={"absolute"} icon={Plus}/>
+                    </TaskEditDialog>
+                </> : null}
             </Tabs.Content>
             <Tabs.Content value={"logs"}>
                 <LogsTab machine_id={id}/>
             </Tabs.Content>
-
         </Tabs>
     </>;
 }
@@ -156,60 +153,77 @@ function Category({icon, title, children}: { icon: React.JSX.Element, title: str
 
 function TaskList({machine_id}: { machine_id: string }) {
     const {tasks} = useTasks(machine_id);
+    const {role: role} = useRole();
+    let height = Dimensions.get('window').height;
+    height *= 0.6;
 
-    if (!tasks)
+    if (!tasks || !role)
         return <Loading/>
 
     let todoTasks = tasks.filter(task => !task.completed_at);
     let doneTasks = tasks.filter(task => task.completed_at);
 
-    return <>
-        <Card height={"50%"}>
-            <Card.Header>
-                <XStack justifyContent={"space-between"}>
-                    <XStack gap={"$2"} alignItems={"center"}>
-                        <LayoutList/>
-                        <H2>To Do</H2>
-                    </XStack>
-                    <XStack gap={"$3"}>
-                        <TaskTemplatesDialog machine_id={machine_id}>
-                            <Button bordered icon={CircleEllipsis}/>
-                        </TaskTemplatesDialog>
-                        <TaskEditDialog machine_id={machine_id} create>
-                            <Button bordered icon={Plus}/>
-                        </TaskEditDialog>
-                    </XStack>
-                </XStack>
-            </Card.Header>
-            <Separator/>
-            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
-                      data={todoTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
-                      keyExtractor={item => item.id}
-            />
+    return (
+        <Accordion type={"single"} defaultValue={"todo"}>
+            <Accordion.Item value={"todo"}>
+                <Accordion.Trigger flexDirection="row" justifyContent="space-between">
+                    {({open}: { open: boolean }) => (
+                        <>
+                            <XStack gap={"$2"} alignItems={"center"}>
+                                <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
+                                    <ChevronDown size="$1"/>
+                                </Square>
+                                <LayoutList/>
+                                <H2>To Do</H2>
+                            </XStack>
+                            <XStack gap={"$3"}>
+                                {canEditTasks(role) ? <>
+                                    <TaskTemplatesDialog machine_id={machine_id}>
+                                        <Button bordered icon={List}/>
+                                    </TaskTemplatesDialog>
+                                    <TaskEditDialog machine_id={machine_id} create>
+                                        <Button bordered icon={Plus}/>
+                                    </TaskEditDialog>
+                                </> : null}
+                            </XStack>
+                        </>
+                    )}
+                </Accordion.Trigger>
+                <Accordion.Content minHeight={0}>
+                    <FlatList contentContainerStyle={{padding: 10, gap: 10, maxHeight: height}}
+                              data={todoTasks}
+                              renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
+                              keyExtractor={item => item.id}/>
+                </Accordion.Content>
+            </Accordion.Item>
+            <Accordion.Item value={"completed"}>
+                <Accordion.Trigger flexDirection="row" justifyContent="space-between">
+                    {({open}: { open: boolean }) => (
+                        <>
+                            <XStack gap={"$2"} alignItems={"center"}>
+                                <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
+                                    <ChevronDown size="$1"/>
+                                </Square>
+                                <ListChecks/>
+                                <H2>Completed</H2>
+                            </XStack>
+                        </>
+                    )}
+                </Accordion.Trigger>
+                <Accordion.Content>
+                    <FlatList contentContainerStyle={{padding: 10, gap: 10, maxHeight: height}}
+                              data={doneTasks}
+                              renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
+                              keyExtractor={item => item.id}/>
+                </Accordion.Content>
+            </Accordion.Item>
+        </Accordion>
+    )
 
-        </Card>
-        <Separator marginVertical={"$2"}/>
-        <Card height={"50%"}>
-            <Card.Header>
-                <XStack gap={"$2"} alignItems={"center"}>
-                    <ListChecks/>
-                    <H2>Done</H2>
-                </XStack>
-            </Card.Header>
-            <Separator/>
-            <FlatList contentContainerStyle={{backgroundColor: "white", padding: 10, gap: 10}}
-                      data={doneTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
-                      keyExtractor={item => item.id}
-            />
-        </Card>
-    </>;
 }
 
 function TaskTab({machine_id}: { machine_id: string }) {
     const {tasks, tasksError} = useTasks(machine_id);
-
     if (tasksError)
         alert(tasksError.message);
 
@@ -251,6 +265,7 @@ function TaskTab({machine_id}: { machine_id: string }) {
                       keyExtractor={item => item.id}
             />
         </Tabs.Content>
+
     </Tabs>
 }
 

@@ -45,16 +45,18 @@ export default function MachineInfo({machine}: { machine: Machine }) {
     return <>
         <Card elevate bordered>
             <Card.Header>
-                <H2 textAlign={"center"}>{machine.name}</H2>
+                <XStack justifyContent={"space-between"}>
+                    <MachineQRCodeDialog machine={machine}>
+                        <Button icon={QrCode}/>
+                    </MachineQRCodeDialog>
+                    <H2 textAlign={"center"}>{machine.name}</H2>
+                    {canEditMachineInfo(role) ? <MachineInfoEditDialog machine={machine}>
+                        <Button icon={Edit3}/>
+                    </MachineInfoEditDialog> : null}
+                </XStack>
                 <XStack justifyContent={"center"}>
                     {desc}
                 </XStack>
-                <MachineQRCodeDialog machine={machine}>
-                    <Button top={"$3"} left={"$3"} position={"absolute"} icon={QrCode}/>
-                </MachineQRCodeDialog>
-                {canEditMachineInfo(role) ? <MachineInfoEditDialog machine={machine}>
-                    <Button top={"$3"} right={"$3"} position={"absolute"} icon={Edit3}/>
-                </MachineInfoEditDialog> : null}
             </Card.Header>
             <Separator marginBottom={"$2.5"}/>
             <View alignSelf={"center"} marginBottom={"$2"}>

@@ -1,13 +1,11 @@
-import {Button, Dialog, Label, XStack, YStack} from "tamagui";
+import {Dialog, Label, XStack, YStack} from "tamagui";
 import React, {useState} from "react";
-import {CheckCircle, Timer, XCircle} from "@tamagui/lucide-icons";
+import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
 import {LmInput} from "@tamagui-extras/form";
 import {useIsWeb} from "../../api/utils";
 import SimpleDialog from "../SimpleDialog";
 import Editor from "../Editor";
-import CronEditDialog from "./CronEditDialog";
-import cronstrue from "cronstrue";
 import {Task, useInsertMachineTask, useInsertTask, useUpdateTask} from "../../api/tasks";
 
 type CreateTaskType = {
@@ -33,7 +31,6 @@ export default function TaskEditDialog({machine_id, task, create, children}: Cre
     const [status, setStatus] = useState<'editing' | 'loading' | 'closed'>('closed')
     const [name, setName] = useState(create ? "New Task" : task.name)
     const [description, setDescription] = useState(create ? "" : task.description ?? "")
-    const [cron, setCron] = useState<string>()
     const [details, setDetails] = useState(create ? "" : task.details ?? "")
     const isWeb = useIsWeb();
 
@@ -113,13 +110,6 @@ export default function TaskEditDialog({machine_id, task, create, children}: Cre
             <LmInput width={"$100"} label={"Name"} value={name} onChangeText={setName} error={name.length < 1}
                      labelInline/>
             <LmInput label={"Description"} value={description} onChangeText={setDescription} labelInline/>
-            {create ?
-                <CronEditDialog cron={cron} setCron={setCron}>
-                    <Button theme={"blue"} icon={Timer}>
-                        {cron ? cronstrue.toString(cron, {verbose: true}) : "Does not repeat"}
-                    </Button>
-                </CronEditDialog>
-                : null}
             <Label>Details:</Label>
             <Editor initialContent={details} onContentChange={setDetails}/>
         </YStack>

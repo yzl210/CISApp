@@ -92,7 +92,6 @@ h1 {
 
 .editor-container {
     border-radius: 2px;
-    max-width: 600px;
     color: #000;
     position: relative;
     line-height: 20px;
@@ -550,11 +549,8 @@ i.chevron-down {
 }
 
 .link-editor {
-    position: absolute;
+    position: unset;
     z-index: 100;
-    top: -10000px;
-    left: -10000px;
-    margin-top: -6px;
     max-width: 300px;
     width: 100%;
     opacity: 0;

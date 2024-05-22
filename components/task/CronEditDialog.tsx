@@ -3,7 +3,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {useIsWeb, WEEK_DAYS} from "../../api/utils";
 import {Adapt, Button, Dialog, Input, Label, Select, Sheet, Text, XGroup, XStack, YStack} from "tamagui";
 import {LmButton} from "@tamagui-extras/core";
-import {Check, CheckCircle, ChevronDown, XCircle} from "@tamagui/lucide-icons";
+import {Check, CheckCircle, ChevronDown, Trash, XCircle} from "@tamagui/lucide-icons";
 import DatePicker from "react-native-date-picker";
 
 
@@ -35,13 +35,13 @@ export default function CronEditDialog(props: CronEditDialogProps) {
 
     useEffect(() => {
         let dayOfMonthPart = daysOfMonth && !(daysOfMonth.size >= 31) ? Array.from(daysOfMonth).join(",") : "*";
-        if (repeatType === 'day') {
+        if (repeatType === 'day' && interval > 1) {
             dayOfMonthPart += "/" + interval;
         }
 
         let dayOfWeekPart = daysOfWeek && !(daysOfWeek.size >= 7) ? Array.from(daysOfWeek).join(",") : "*";
         let monthPart = "*";
-        if (repeatType === 'month') {
+        if (repeatType === 'month' && interval > 1) {
             monthPart += "/" + interval;
         }
 
@@ -125,6 +125,11 @@ export default function CronEditDialog(props: CronEditDialogProps) {
     let confirm = () => {
         if (cron)
             props.setCron(cron)
+        setOpen(false)
+    }
+
+    let clear = () => {
+        props.setCron("")
         setOpen(false)
     }
 
@@ -216,11 +221,14 @@ export default function CronEditDialog(props: CronEditDialogProps) {
 
         </YStack>
         <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
-            <LmButton theme={"red"} onPress={cancel} icon={<XCircle/>}>
+            <LmButton theme={"red"} onPress={cancel} icon={XCircle}>
                 Cancel
             </LmButton>
-            <LmButton theme={"green"} onPress={confirm} icon={<CheckCircle/>}>
+            <LmButton theme={"green"} onPress={confirm} icon={CheckCircle}>
                 Confirm
+            </LmButton>
+            <LmButton onPress={clear} icon={Trash}>
+                Clear
             </LmButton>
         </XStack>
     </SimpleDialog>
@@ -241,8 +249,8 @@ function WebTimeOfDaySelect({time, setTime}: { time: Date, setTime: (time: Date)
                       // @ts-ignore
                       if (e?.nativeEvent?.target?.value) {
                           // @ts-ignore
-                              change(e.nativeEvent.target.value)
-                          }
+                          change(e.nativeEvent.target.value)
+                      }
                   }}/>
 }
 
