@@ -1,4 +1,4 @@
-import {Button, Dialog, Label, XStack, YStack} from "tamagui";
+import {Button, Dialog, Label, ScrollView, XStack, YStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, Timer, Trash, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
@@ -15,6 +15,7 @@ import {
     useInsertTaskTemplate,
     useUpdateTaskTemplate
 } from "../../api/tasks";
+import {DeleteConfirmDialog} from "../ConfirmDialog";
 
 type CreateTaskTemplateType = {
     machine_id: string;
@@ -131,23 +132,27 @@ export default function TaskTemplateEditDialog({
         {!create ? <Dialog.Description alignItems={"center"}>
             Editing {template.name}
         </Dialog.Description> : null}
-        <YStack gap={"$2"}>
-            <LmInput label={"Name"} value={name} onChangeText={setName} error={name.length < 1} labelInline/>
-            <LmInput label={"Description"} value={description} onChangeText={setDescription} labelInline/>
+        <ScrollView>
+            <YStack gap={"$2"}>
+                <LmInput label={"Name"} value={name} onChangeText={setName} error={name.length < 1} labelInline/>
+                <LmInput label={"Description"} value={description} onChangeText={setDescription} labelInline/>
 
-            <CronEditDialog cron={emptyToNull(cron)} setCron={setCron}>
-                <Button theme={"blue"} icon={Timer}>
-                    {emptyToNull(cron) ? cronstrue.toString(cron, {verbose: true}) : "Does not repeat"}
-                </Button>
-            </CronEditDialog>
+                <CronEditDialog cron={emptyToNull(cron)} setCron={setCron}>
+                    <Button theme={"blue"} icon={Timer}>
+                        {emptyToNull(cron) ? cronstrue.toString(cron, {verbose: true}) : "Does not repeat"}
+                    </Button>
+                </CronEditDialog>
 
-            <Label>Details:</Label>
-            <Editor initialContent={details} onContentChange={setDetails}/>
-        </YStack>
+                <Label>Details:</Label>
+                <Editor initialContent={details} onContentChange={setDetails}/>
+            </YStack>
+        </ScrollView>
         <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
-            {!create ? <LmButton theme={"red"} onPress={doDelete} loading={status === 'deleting'} icon={Trash}>
-                Delete
-            </LmButton> : null}
+            {!create ? <DeleteConfirmDialog title={"Task Template"} description={template.name} doDelete={doDelete}>
+                <LmButton theme={"red"} loading={status === 'deleting'} icon={Trash}>
+                    Delete
+                </LmButton>
+            </DeleteConfirmDialog> : null}
             <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={<XCircle/>}>
                 Cancel
             </LmButton>

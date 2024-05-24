@@ -1,4 +1,4 @@
-import {Button, Dialog, Separator, Text, XStack} from "tamagui";
+import {Button, Dialog, ScrollView, Separator, Text, XStack} from "tamagui";
 import React, {useState} from "react";
 import {Edit3, Trash, X} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
@@ -67,9 +67,13 @@ export default function TaskDetailsDialog({machine_id, task, children}: {
             {completionDate ? <Text>Completed On: {completionDate.toLocaleString() + "\n"}</Text> : null}
         </Dialog.Description>
 
-        {task.details ?
-            <><Separator marginVertical={"$2"}/><RenderHTML source={{html: task.details ?? ""}}/><Separator
-                marginVertical={"$2"}/></> : null}
+        {task.details ? <>
+            <Separator marginVertical={"$2"}/>
+            <ScrollView>
+                <RenderHTML source={{html: task.details ?? ""}}/>
+            </ScrollView>
+            <Separator marginVertical={"$2"}/>
+        </> : null}
 
         <Button circular position={"absolute"} top={"$3"} right={"$3"} size={"$2"} icon={X}
                 onPress={() => openChange(false)}/>

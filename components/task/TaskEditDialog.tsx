@@ -1,4 +1,4 @@
-import {Dialog, Label, XStack, YStack} from "tamagui";
+import {Dialog, Label, ScrollView, XStack, YStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
@@ -106,13 +106,15 @@ export default function TaskEditDialog({machine_id, task, create, children}: Cre
         {!create ? <Dialog.Description alignItems={"center"}>
             Editing {task.name}
         </Dialog.Description> : null}
-        <YStack gap={"$2"}>
-            <LmInput width={"$100"} label={"Name"} value={name} onChangeText={setName} error={name.length < 1}
-                     labelInline/>
-            <LmInput label={"Description"} value={description} onChangeText={setDescription} labelInline/>
-            <Label>Details:</Label>
-            <Editor initialContent={details} onContentChange={setDetails}/>
-        </YStack>
+        <ScrollView>
+            <YStack gap={"$2"}>
+                <LmInput width={"$100"} label={"Name"} value={name} onChangeText={setName} error={name.length < 1}
+                         labelInline/>
+                <LmInput label={"Description"} value={description} onChangeText={setDescription} labelInline/>
+                <Label>Details:</Label>
+                <Editor initialContent={details} onContentChange={setDetails}/>
+            </YStack>
+        </ScrollView>
         <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
             <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={<XCircle/>}>
                 Cancel

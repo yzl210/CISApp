@@ -1,5 +1,5 @@
 import {Machine} from "../../api/machine";
-import {Dialog, View, XStack} from "tamagui";
+import {Dialog, ScrollView, XStack} from "tamagui";
 import React, {useState} from "react";
 import {Save, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
@@ -40,9 +40,9 @@ export default function MachineQRCodeDialog({machine, children}: {
         <Dialog.Description>
             Displaying QR Code for {machine.name}
         </Dialog.Description>
-        <View alignSelf={"center"}>
+        <ScrollView alignSelf={"center"}>
             <QRCode getRef={setQR} size={200} value={machine.id}/>
-        </View>
+        </ScrollView>
         <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
             <LmButton theme={"red"} onPress={close} icon={XCircle}>
                 Close

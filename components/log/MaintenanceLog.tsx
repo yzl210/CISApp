@@ -1,4 +1,4 @@
-import {Log} from "../api/API";
+import {Log} from "../../api/API";
 import {Card, H2, Separator, Text, XStack} from "tamagui";
 
 export default function MaintenanceLog({log}: { log: Log }) {

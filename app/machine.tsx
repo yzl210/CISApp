@@ -10,7 +10,7 @@ import {useIsLandscape} from "../api/utils";
 import React from "react";
 import {Dimensions, FlatList, Pressable} from "react-native";
 import {Log, useRole} from "../api/API";
-import MaintenanceLog from "../components/MaintenanceLog";
+import MaintenanceLog from "../components/log/MaintenanceLog";
 import MachineTags from "../components/tag/MachineTags";
 import {canEditTags, canEditTasks} from "../api/users";
 import MachineDescription from "../components/machine/MachineDescription";
@@ -164,8 +164,17 @@ function TaskList({machine_id}: { machine_id: string }) {
     let doneTasks = tasks.filter(task => task.completed_at);
 
     return (
-        <Accordion type={"single"} defaultValue={"todo"}>
+        <Accordion type={"single"} defaultValue={"todo"} collapsible>
             <Accordion.Item value={"todo"}>
+                {canEditTasks(role) ?
+                    <XStack gap={"$3"} position={"absolute"} right={"$4"} top={"$3.5"} zIndex={1}>
+                        <TaskTemplatesDialog machine_id={machine_id}>
+                            <Button bordered icon={List}/>
+                        </TaskTemplatesDialog>
+                        <TaskEditDialog machine_id={machine_id} create>
+                            <Button bordered icon={Plus}/>
+                        </TaskEditDialog>
+                    </XStack> : null}
                 <Accordion.Trigger flexDirection="row" justifyContent="space-between">
                     {({open}: { open: boolean }) => (
                         <>
@@ -175,16 +184,6 @@ function TaskList({machine_id}: { machine_id: string }) {
                                 </Square>
                                 <LayoutList/>
                                 <H2>To Do</H2>
-                            </XStack>
-                            <XStack gap={"$3"}>
-                                {canEditTasks(role) ? <>
-                                    <TaskTemplatesDialog machine_id={machine_id}>
-                                        <Button bordered icon={List}/>
-                                    </TaskTemplatesDialog>
-                                    <TaskEditDialog machine_id={machine_id} create>
-                                        <Button bordered icon={Plus}/>
-                                    </TaskEditDialog>
-                                </> : null}
                             </XStack>
                         </>
                     )}

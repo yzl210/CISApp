@@ -178,9 +178,7 @@ export default function CronEditDialog(props: CronEditDialogProps) {
                     </Adapt>
 
                     <Select.Content zIndex={200000}>
-                        <Select.Viewport
-                            minWidth={100}
-                        >
+                        <Select.Viewport minWidth={100}>
                             <Select.Group>
                                 {useMemo(
                                     () =>

@@ -38,7 +38,7 @@ export default function TaskTemplateOverview({template}: { template: TaskTemplat
         <Card elevate bordered>
             <Card.Header>
                 <XStack justifyContent={"space-between"}>
-                    <H4 alignSelf={"center"} numberOfLines={1}>{template.name}</H4>
+                    <H4 alignSelf={"center"} numberOfLines={1} marginRight={"$3"}>{template.name}</H4>
                     <XStack gap={"$3"}>
                         <Button icon={Plus} theme={"green"} onPress={addTask}/>
                         <TaskTemplateEditDialog machine_id={template.machine} template={template}>

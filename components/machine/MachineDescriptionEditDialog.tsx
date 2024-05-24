@@ -1,5 +1,5 @@
 import {Machine, useUpdateMachine} from "../../api/machine";
-import {Dialog, XStack} from "tamagui";
+import {Dialog, ScrollView, XStack} from "tamagui";
 import React, {useState} from "react";
 import {CheckCircle, XCircle} from "@tamagui/lucide-icons";
 import {LmButton} from "@tamagui-extras/core";
@@ -48,7 +48,9 @@ export default function MachineDescriptionEditDialog({machine, children}: {
         <Dialog.Description>
             Editing {machine.name}
         </Dialog.Description>
-        <Editor initialContent={text} onContentChange={setText}/>
+        <ScrollView>
+            <Editor initialContent={text} onContentChange={setText}/>
+        </ScrollView>
         <XStack alignSelf={"center"} gap={"$3"} marginTop={"$3"}>
             <LmButton theme={"red"} onPress={cancel} disabled={status !== 'editing'} icon={XCircle}>
                 Cancel

@@ -6,7 +6,7 @@ import {
     useUpdateMutation
 } from "@supabase-cache-helpers/postgrest-react-query";
 
-const machineColumns = "id,created_at,updated_at,name,brand,model,serial,location,description,image";
+const machineColumns = "id,created_at,updated_at,name,brand,model,serial,location,description,image,volts,phase,amperage,hertz,electrically_certified";
 const machineTagColumns = "machine,tag,created_at,created_by";
 const tagColumns = "id,created_at,created_by,name,color";
 
@@ -73,6 +73,11 @@ export interface Machine {
     location?: string;
     description?: string;
     image?: string;
+    volts?: string;
+    phase?: string;
+    amperage?: string;
+    hertz?: string;
+    electrically_certified: boolean;
 }
 
 
