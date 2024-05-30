@@ -23,7 +23,7 @@ export default function MachineTags({machine, tags}: { machine: Machine, tags: T
             <XStack flexWrap={"wrap"} margin={"$3"} gap={"$2"}>
                 {tags ? tags.map(tag => <PopoverTag key={tag.id} machine={machine} tag={tag}/>) : null}
                 {canEdit ? <AddTagPopover machine={machine} tags={tags}>
-                    <Button variant={"outlined"} size={"$2"} icon={Plus} scaleIcon={1}/>
+                    <Button variant={"outlined"} size={"$2"} icon={Plus} scaleIcon={1} alignSelf={"flex-end"}/>
                 </AddTagPopover> : null}
             </XStack>
         </Card>

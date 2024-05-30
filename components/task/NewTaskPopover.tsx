@@ -1,11 +1,9 @@
 import React, {useState} from "react";
-import SimplePopover from "../SimplePopover";
 import {Button, Popover, YStack} from "tamagui";
 import TaskEditDialog from "./TaskEditDialog";
 
-export default function NewTaskPopover({children, machine_id} : {children: React.ReactNode, machine_id: string}) {
+export default function NewTaskPopover({children, machine_id}: { children: React.ReactNode, machine_id: string }) {
     const [open, setOpen] = useState(false);
-
 
 
     let close = () => {

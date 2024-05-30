@@ -241,8 +241,8 @@ function WebTimeOfDaySelect({time, setTime}: { time: Date, setTime: (time: Date)
                       // @ts-ignore
                       if (e?.nativeEvent?.target?.value) {
                           // @ts-ignore
-                              change(e.nativeEvent.target.value)
-                          }
+                          change(e.nativeEvent.target.value)
+                      }
                   }}/>
 }
 

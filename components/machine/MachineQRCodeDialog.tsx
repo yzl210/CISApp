@@ -6,10 +6,9 @@ import {LmButton} from "@tamagui-extras/core";
 import {useIsWeb} from "../../api/utils";
 import SimpleDialog from "../SimpleDialog";
 import QRCode from "react-native-qrcode-svg";
-import ViewShot, {captureRef} from "react-native-view-shot";
-import {Linking, Platform, View as RNView} from "react-native"
+import {captureRef} from "react-native-view-shot";
+import {Linking, View as RNView} from "react-native"
 import Sharing from 'expo-sharing';
-import * as url from "url";
 
 export default function MachineQRCodeDialog({machine, children}: {
     machine: Machine,
@@ -26,13 +25,13 @@ export default function MachineQRCodeDialog({machine, children}: {
             format: "png",
             quality: 1,
         }).then(
-             (uri) => {
+            (uri) => {
                 if (isWeb) {
                     Linking.openURL(uri).then()
                 } else {
                     Sharing.isAvailableAsync().then((a) => alert(a))
                         .catch(e => alert(e))
-                         Sharing.shareAsync(uri).then()
+                    Sharing.shareAsync(uri).then()
                 }
             },
             (error) => console.error("Oops, snapshot failed", error)

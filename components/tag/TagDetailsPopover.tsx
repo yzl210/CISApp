@@ -1,4 +1,4 @@
-import {Button, Popover, Text, XStack, YStack} from "tamagui";
+import {Button, Text, XStack, YStack} from "tamagui";
 import {Machine, Tag, useDeleteMachineTag, useMachineTag} from "../../api/machine";
 import React, {useState} from "react";
 import Loading from "../Loading";
@@ -76,7 +76,7 @@ export default function TagDetailsPopover({machine, tag, children}: {
             <LmButton loading={deleting} theme={"red"} size={"$2.5"} icon={Trash} onPress={deleteTag}/>
             <TagEditDialog tag={tag}>
                 <Button size={"$2.5"} icon={Edit3}/>
-                </TagEditDialog>
+            </TagEditDialog>
         </XStack> : null}
     </SimplePopover>
 }

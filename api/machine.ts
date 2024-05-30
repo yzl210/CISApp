@@ -143,6 +143,19 @@ export function useTags(machine_id: string) {
     return {machineTags, machineTagsStatus, machineTagsError, tags, tagsStatus, tagsError};
 }
 
+export function useInsertTags() {
+    return useInsertMutation(supabase.from('tags'), ['id'], tagColumns);
+}
+
+export function useUpdateTag() {
+    return useUpdateMutation(supabase.from('tags'), ['id'], tagColumns);
+}
+
+export function useDeleteTag() {
+    return useDeleteMutation(supabase.from('tags'), ['id'], tagColumns);
+}
+
+
 export function useInsertMachineTags() {
     return useInsertMutation(supabase.from('machine_tags'), ['machine', 'tag'], machineTagColumns);
 }
@@ -154,3 +167,4 @@ export function useDeleteMachineTag() {
 export function useUpdateMachineTag() {
     return useUpdateMutation(supabase.from('machines'), ['id'], machineColumns);
 }
+
