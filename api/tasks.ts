@@ -19,30 +19,30 @@ export function getMachineTasks(machine_id: string) {
         .eq('machine', machine_id);
 }
 
-export function getTasks(tasks: MachineTask[], done?: boolean) {
-    return getTasksByIds(tasks.map(t => t.task), done);
+export function getTasks(tasks: { task: string }[], completed?: boolean) {
+    return getTasksByIds(tasks.map(t => t.task), completed);
 }
 
-export function getTasksByIds(task_ids: string[], done?: boolean) {
+export function getTasksByIds(task_ids: string[], completed?: boolean) {
     let request = supabase
         .from('tasks')
         .select<typeof taskColumns, Task>(taskColumns)
         .in('id', task_ids);
 
 
-    if (done !== undefined)
-        request = request.eq('done', done);
+    if (completed !== undefined)
+        request = completed ? request.not('completed_at', 'is', 'null') : request.is('completed_at', 'null');
 
     return request
 }
 
-export function useTasks(machine_id: string) {
+export function useTasks(machine_id: string, completed?: boolean) {
     const {
         data: machineTasks,
         status: machineTasksStatus,
         error: machineTasksError
     } = useQuery(getMachineTasks(machine_id));
-    const {data: tasks, status: tasksStatus, error: tasksError} = useQuery(getTasks(machineTasks ?? []), {
+    const {data: tasks, status: tasksStatus, error: tasksError} = useQuery(getTasks(machineTasks ?? [], completed), {
         enabled: !!machineTasks
     });
 

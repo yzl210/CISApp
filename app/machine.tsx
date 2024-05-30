@@ -1,24 +1,40 @@
 import {Redirect, Stack, useLocalSearchParams} from "expo-router";
 import MachineInfo from "../components/machine/MachineInfo";
 import TaskOverview from "../components/task/TaskOverview";
-import {Accordion, Button, H2, ScrollView, Separator, SizableText, Square, Tabs, View, XStack, YStack} from "tamagui";
+import {
+    Accordion,
+    Button,
+    H2,
+    Input,
+    ScrollView,
+    Separator,
+    SizableText,
+    Square,
+    Tabs,
+    View,
+    XGroup,
+    XStack,
+    YStack
+} from "tamagui";
 import {ChevronDown, Info, LayoutList, List, ListChecks, ListTodo, Plus, ScrollText} from "@tamagui/lucide-icons";
 import {getMachineTags, getTags, Machine, useMachine} from "../api/machine";
 import Loading from "../components/Loading";
 import {useQuery} from "@supabase-cache-helpers/postgrest-react-query";
-import {useIsLandscape} from "../api/utils";
-import React from "react";
+import {search, useIsLandscape} from "../api/utils";
+import React, {useState} from "react";
 import {Dimensions, FlatList, Pressable} from "react-native";
-import {Log, useRole} from "../api/API";
+import {useRole} from "../api/API";
 import MaintenanceLog from "../components/log/MaintenanceLog";
 import MachineTags from "../components/tag/MachineTags";
-import {canEditTags, canEditTasks} from "../api/users";
+import {canEditLogs, canEditTags, canEditTasks} from "../api/users";
 import MachineDescription from "../components/machine/MachineDescription";
 import TaskDetailsDialog from "../components/task/TaskDetailsDialog";
 import TaskEditDialog from "../components/task/TaskEditDialog";
 import TaskTemplatesDialog from "../components/task/TaskTemplatesDialog";
 import {Task, useTasks} from "../api/tasks";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {useLogs} from "../api/logs";
+import MaintenanceLogEditDialog from "../components/log/MaintenanceLogEditDialog";
 
 export default function MachinePage() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -164,7 +180,7 @@ function TaskList({machine_id}: { machine_id: string }) {
     let doneTasks = tasks.filter(task => task.completed_at);
 
     return (
-        <Accordion type={"single"} defaultValue={"todo"} collapsible>
+        <Accordion type={"multiple"} defaultValue={["todo"]}>
             <Accordion.Item value={"todo"}>
                 {canEditTasks(role) ?
                     <XStack gap={"$3"} position={"absolute"} right={"$4"} top={"$3.5"} zIndex={1}>
@@ -191,7 +207,7 @@ function TaskList({machine_id}: { machine_id: string }) {
                 <Accordion.Content minHeight={0}>
                     <FlatList contentContainerStyle={{padding: 10, gap: 10, maxHeight: height}}
                               data={todoTasks}
-                              renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
+                              renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                               keyExtractor={item => item.id}/>
                 </Accordion.Content>
             </Accordion.Item>
@@ -212,7 +228,7 @@ function TaskList({machine_id}: { machine_id: string }) {
                 <Accordion.Content>
                     <FlatList contentContainerStyle={{padding: 10, gap: 10, maxHeight: height}}
                               data={doneTasks}
-                              renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
+                              renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                               keyExtractor={item => item.id}/>
                 </Accordion.Content>
             </Accordion.Item>
@@ -252,7 +268,7 @@ function TaskTab({machine_id}: { machine_id: string }) {
         <Tabs.Content value={"todos"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={todoTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                       keyExtractor={item => item.id}
             />
         </Tabs.Content>
@@ -260,7 +276,7 @@ function TaskTab({machine_id}: { machine_id: string }) {
         <Tabs.Content value={"done"}>
             <FlatList contentContainerStyle={{height: "100%", backgroundColor: "white", padding: 10, gap: 10}}
                       data={doneTasks}
-                      renderItem={item => <MachineTaskWithDialog task={item.item} machine_id={machine_id}/>}
+                      renderItem={item => <MachineTaskWithDialog task={item.item}/>}
                       keyExtractor={item => item.id}
             />
         </Tabs.Content>
@@ -268,8 +284,8 @@ function TaskTab({machine_id}: { machine_id: string }) {
     </Tabs>
 }
 
-function MachineTaskWithDialog({machine_id, task}: { machine_id: string, task: Task }) {
-    return <TaskDetailsDialog key={task.id} task={task} machine_id={machine_id}>
+function MachineTaskWithDialog({task}: { task: Task }) {
+    return <TaskDetailsDialog key={task.id} task={task}>
         <Pressable>
             <TaskOverview task={task}/>
         </Pressable>
@@ -278,18 +294,33 @@ function MachineTaskWithDialog({machine_id, task}: { machine_id: string, task: T
 }
 
 function LogsTab({machine_id}: { machine_id: string }) {
-    let log: Log = {
-        id: "1",
-        author: "Somebody",
-        time: Date.now(),
-        title: "Machine maintained",
-        content: "Machine was maintained and cleaned, all parts are in good condition, no need for replacement, machine is ready for use, all tasks are done, machine is ready for use.",
-        changes: []
+    const [query, setQuery] = useState('')
 
-    }
+    const {role} = useRole();
+    const {logs} = useLogs(machine_id);
+
+    if (!logs || !role)
+        return <Loading/>
+
+    let filteredLogs = (query.length < 1 ? logs : logs
+        .filter(log => search(log.title, query) || search(log.content, query)))
+        .sort((a, b) => - (new Date(a.created_at).getTime() - new Date(b.created_at).getTime()));
 
     return <View height={"100%"}>
-        <FlatList data={[log]} renderItem={item => <MaintenanceLog log={item.item}/>} keyExtractor={item => item.id}/>
+        <XGroup marginBottom={"$2"}>
+            {canEditLogs(role) ? <XGroup.Item>
+                <MaintenanceLogEditDialog create machine_id={machine_id}>
+                    <Button icon={Plus}/>
+                </MaintenanceLogEditDialog>
+            </XGroup.Item> : null}
+            <XGroup.Item>
+                <Input placeholder={"Search..."} value={query} onChangeText={setQuery} width={"100%"}/>
+            </XGroup.Item>
+        </XGroup>
+        <FlatList data={filteredLogs}
+                  contentContainerStyle={{gap: 10}}
+                  renderItem={item => <MaintenanceLog log={item.item}/>}
+                  keyExtractor={item => item.id}/>
     </View>
 }
 

@@ -42,7 +42,7 @@ export function getUserRole(user_id: string) {
 
 export function useUser(user_id?: string) {
     const session = useSession();
-    const {data: user, error} = useQuery(getUser(session.session?.user.id ?? ""), {
+    const {data: user, error} = useQuery(getUser(user_id ?? session.session?.user.id ?? ""), {
         enabled: !!session.session?.user.id
     });
     return {user, error, session};
@@ -60,23 +60,6 @@ export function useRole() {
 // export function search(query: string): Machine[] {
 //     return getPins().filter(machine => machine.name.toLowerCase().includes(query.toLowerCase()));
 // }
-
-
-export interface Log {
-    id: string;
-    author: string;
-    time: number;
-    title: string;
-    content: string;
-    changes: Change[];
-}
-
-export type Change = TaskStatusChange;
-
-export interface TaskStatusChange {
-    task: string;
-    status: boolean;
-}
 
 export interface User {
     id: string;

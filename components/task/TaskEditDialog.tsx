@@ -16,7 +16,7 @@ type CreateTaskType = {
 }
 
 type EditTaskType = {
-    machine_id: string;
+    machine_id?: never;
     task: Task;
     create?: false;
     children: React.ReactNode;

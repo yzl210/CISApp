@@ -9,12 +9,11 @@ import {useTasks} from "../../api/tasks";
 
 
 export default function MachineOverview({machine}: { machine: Machine }) {
-
-    const {tasks} = useTasks(machine.id);
+    const {tasks} = useTasks(machine.id, false);
     const {tags} = useTags(machine.id);
 
     let openMachine = () => {
-        router.navigate({pathname: '/machine', params: {id: machine.id}});
+        router.push({pathname: '/machine', params: {id: machine.id}});
     }
 
     return (
@@ -22,7 +21,7 @@ export default function MachineOverview({machine}: { machine: Machine }) {
               animation={"quick"}>
             <Card.Header padded>
                 <XStack alignSelf={machine.image ? undefined : "center"}>
-                    <View alignSelf={"center"} maxWidth={"$19"}>
+                    <View alignSelf={"center"}>
                         <H3 alignSelf={"center"}>{machine.name}</H3>
                         {machine.model ? <H5 color={"grey"} alignSelf={"center"}>{machine.model}</H5> : null}
                     </View>
@@ -42,6 +41,29 @@ export default function MachineOverview({machine}: { machine: Machine }) {
                         <Text alignSelf={"center"}>{task.name}</Text>
                     </XStack>
                 )} scrollEnabled={false} keyExtractor={item => item.id}/> : <Spinner/>}
+            </Card.Header>
+        </Card>
+    );
+}
+
+export function SimpleMachineOverview({machine}: { machine: Machine }) {
+    let openMachine = () => {
+        router.push({pathname: '/machine', params: {id: machine.id}});
+    }
+
+    return (
+        <Card elevate bordered onPress={openMachine} hoverStyle={{scale: 0.975}} pressStyle={{scale: 0.95}}
+              animation={"quick"}>
+            <Card.Header padded>
+                <XStack alignSelf={machine.image ? undefined : "center"}>
+                    <View alignSelf={"center"}>
+                        <H3 alignSelf={"center"}>{machine.name}</H3>
+                    </View>
+                    {machine.image ? <>
+                        <Separator vertical marginHorizontal={"$3"}/>
+                        <Image source={machine.image} style={{width: 50, height: 50}} contentFit={"contain"}/>
+                    </> : null}
+                </XStack>
             </Card.Header>
         </Card>
     );

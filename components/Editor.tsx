@@ -73,6 +73,6 @@ function WebEditor({initialContent, onContentChange, width, height}: EditorProps
     return <iframe
         ref={iFrame}
         srcDoc={htmlString}
-        style={{width: width, height: height, border: 0, borderTopLeftRadius: 15, borderTopRightRadius: 15}}
+        style={{minWidth: width, minHeight: height, border: 0, borderTopLeftRadius: 15, borderTopRightRadius: 15}}
     />;
 }

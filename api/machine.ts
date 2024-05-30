@@ -22,7 +22,11 @@ export function getMachine(machine_id: string) {
         .single();
 }
 
-export function getMachines(machine_ids: string[]) {
+export function getMachines(machines: { machine: string }[]) {
+    return getMachinesByIds(machines.map(m => m.machine));
+}
+
+export function getMachinesByIds(machine_ids: string[]) {
     return getAllMachines()
         .in('id', machine_ids);
 }
@@ -33,7 +37,7 @@ export function useMachine(machine_id: string) {
 }
 
 export function useMachines(machine_id: string[]) {
-    const {data: machines, status: machinesStatus, error: machinesError} = useQuery(getMachines(machine_id));
+    const {data: machines, status: machinesStatus, error: machinesError} = useQuery(getMachinesByIds(machine_id));
     return {machines, machinesStatus, machinesError};
 }
 

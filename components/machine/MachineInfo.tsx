@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, H2, Separator, Text, View, XStack} from "tamagui";
 import {Machine} from "../../api/machine";
-import {Edit3, QrCode} from "@tamagui/lucide-icons";
+import {CircleEllipsis, Edit3, QrCode} from "@tamagui/lucide-icons";
 import MachineInfoEditDialog from "./MachineInfoEditDialog";
 import {useRole} from "../../api/API";
 import Loading from "../Loading";
@@ -52,7 +52,7 @@ export default function MachineInfo({machine}: { machine: Machine }) {
                     <H2 textAlign={"center"}>{machine.name}</H2>
                     {canEditMachineInfo(role) ? <MachineInfoEditDialog machine={machine}>
                         <Button icon={Edit3}/>
-                    </MachineInfoEditDialog> : null}
+                    </MachineInfoEditDialog> : <Button icon={CircleEllipsis}/>}
                 </XStack>
                 <XStack justifyContent={"center"}>
                     {desc}

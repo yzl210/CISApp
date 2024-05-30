@@ -17,3 +17,7 @@ export function canEditTasks(role: UserRole) {
 export function canCreateMachine(role: UserRole) {
     return role.role === "admin";
 }
+
+export function canEditLogs(role: UserRole) {
+    return role.role === "admin";
+}
